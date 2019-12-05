@@ -294,28 +294,37 @@ namespace SMSapplication
                         while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
                         if (buffer.EndsWith("\r\nOK\r\n"))
                         {
-                            keyValue++;
+                          
+                            apiLink = "done/" + messages[0].id;
+                            result = _client.GetAsync(apiLink).Result;
                             ShowLog("SMS:" + sPort1.PortName + ":::" + messages[0].mobile + "::: Successfull");
-
+                            
                         }
                         if (buffer.EndsWith("\r\nERROR\r\n"))
                         {
-
+                            list.Remove(messages[0].id);
                             ShowLog("SMS ::" + sPort1.PortName + "::: Error");
                         }
                     }
                     catch (Exception ex)
                     {
+                        list.Remove(messages[0].id);
                         //
                     }
                 }
-                apiLink = "done/" + messages[0].id;
-                result = _client.GetAsync(apiLink).Result;  // Blocking call!
+                else
+                {
+                    apiLink = "done/" + messages[0].id;
+                    result = _client.GetAsync(apiLink).Result;
+                   
+                }
+                // Blocking call!
                 
             }
             else
             {
                 ShowLog(sPort1.PortName + "::: No Message Find");
+
             }
             
         }
@@ -413,24 +422,29 @@ namespace SMSapplication
                         if (buffer.EndsWith("\r\nOK\r\n"))
                         {
 
-                            keyValue++;
-
+                            apiLink = "done/" + messages[0].id;
+                            result = _client.GetAsync(apiLink).Result;  // Blocking call!
                             ShowLog("SMS:" + sPort2.PortName + ":::" + messages[0].mobile + "::: Successfull");
 
                         }
                         if (buffer.EndsWith("\r\nERROR\r\n"))
                         {
-
+                            list.Remove(messages[0].id);
                             ShowLog("SMS ::" + sPort2.PortName + "::: Error");
                         }
                     }
                     catch (Exception ex)
                     {
+                        list.Remove(messages[0].id);
                         //
                     }
                 }
-                apiLink = "done/" + messages[0].id;
-                result = _client.GetAsync(apiLink).Result;  // Blocking call!
+                else
+                {
+                    apiLink = "done/" + messages[0].id;
+                    result = _client.GetAsync(apiLink).Result;  // Blocking call!
+                }
+              
              
             }
             else
@@ -532,24 +546,29 @@ namespace SMSapplication
                         if (buffer.EndsWith("\r\nOK\r\n"))
                         {
 
-                            keyValue++;
-
+                            apiLink = "done/" + messages[0].id;
+                            result = _client.GetAsync(apiLink).Result;  // Blocking call!
                             ShowLog("SMS:" + sPort3.PortName + ":::" + messages[0].mobile + "::: Successfull");
 
                         }
                         if (buffer.EndsWith("\r\nERROR\r\n"))
                         {
-                            
+                            list.Remove(messages[0].id);
                             ShowLog("SMS ::" + sPort3.PortName + "::: Error");
                         }
                     }
                     catch (Exception ex)
                     {
+                        list.Remove(messages[0].id);
                         //
                     }
                 }
-                apiLink = "done/" + messages[0].id;
-                result = _client.GetAsync(apiLink).Result;  // Blocking call!
+                else
+                {
+                    apiLink = "done/" + messages[0].id;
+                    result = _client.GetAsync(apiLink).Result;  // Blocking call!
+                }
+             
                 
             }
             else
@@ -649,24 +668,30 @@ namespace SMSapplication
                         if (buffer.EndsWith("\r\nOK\r\n"))
                         {
 
-                            keyValue++;
+                            apiLink = "done/" + messages[0].id;
+                            result = _client.GetAsync(apiLink).Result;  // Blocking call!
                             ShowLog("SMS:" + sPort4.PortName + ":::" + messages[0].mobile + "::: Successfull");
 
 
                         }
                         if (buffer.EndsWith("\r\nERROR\r\n"))
                         {
-
+                            list.Remove(messages[0].id);
                             ShowLog("SMS ::" + sPort4.PortName + "::: Error");
                         }
                     }
                     catch (Exception ex)
                     {
+                        list.Remove(messages[0].id);
                         //
                     }
                 }
-                apiLink = "done/" + messages[0].id;
-                result = _client.GetAsync(apiLink).Result;  // Blocking call!
+                else
+                {
+                    apiLink = "done/" + messages[0].id;
+                    result = _client.GetAsync(apiLink).Result;  // Blocking call!
+                }
+              
                
             }
             else
@@ -767,23 +792,29 @@ namespace SMSapplication
                         while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
                         if (buffer.EndsWith("\r\nOK\r\n"))
                         {
-                            keyValue++;
+                            apiLink = "done/" + messages[0].id;
+                            result = _client.GetAsync(apiLink).Result;  // Blocking call!
                             ShowLog("SMS:" + sPort5.PortName + ":::" + messages[0].mobile + "::: Successfull");
 
                         }
                         if (buffer.EndsWith("\r\nERROR\r\n"))
                         {
-
+                            list.Remove(messages[0].id);
                             ShowLog("SMS ::" + sPort5.PortName + "::: Error");
                         }
                     }
                     catch (Exception ex)
                     {
+                        list.Remove(messages[0].id);
                         //
                     }
                 }
-                apiLink = "done/" + messages[0].id;
-                result = _client.GetAsync(apiLink).Result;  // Blocking call!
+                else
+                {
+                    apiLink = "done/" + messages[0].id;
+                    result = _client.GetAsync(apiLink).Result;  // Blocking call!
+                }
+            
               
 
             }
@@ -887,24 +918,31 @@ namespace SMSapplication
                         if (buffer.EndsWith("\r\nOK\r\n"))
                         {
 
-                            keyValue++;
+                            apiLink = "done/" + messages[0].id;
+                            result = _client.GetAsync(apiLink).Result;  // Blocking call!
                             ShowLog("SMS:" + sPort6.PortName + ":::" + messages[0].mobile + "::: Successfull");
 
 
                         }
                         if (buffer.EndsWith("\r\nERROR\r\n"))
                         {
-
+                            list.Remove(messages[0].id);
                             ShowLog("SMS ::" + sPort6.PortName + "::: Error");
                         }
                     }
                     catch (Exception ex)
+
                     {
+                        list.Remove(messages[0].id);
                         //
                     }
                 }
-                apiLink = "done/" + messages[0].id;
-                result = _client.GetAsync(apiLink).Result;  // Blocking call!
+                else
+                {
+                    apiLink = "done/" + messages[0].id;
+                    result = _client.GetAsync(apiLink).Result;  // Blocking call!
+                }
+               
                 
             }
             else
@@ -1006,24 +1044,29 @@ namespace SMSapplication
                         if (buffer.EndsWith("\r\nOK\r\n"))
                         {
 
-                            keyValue++;
-
+                            apiLink = "done/" + messages[0].id;
+                            result = _client.GetAsync(apiLink).Result;
                             ShowLog("SMS:" + sPort7.PortName + ":::" + messages[0].mobile + "::: Successfull");
 
                         }
                         if (buffer.EndsWith("\r\nERROR\r\n"))
                         {
-
+                            list.Remove(messages[0].id);
                             ShowLog("SMS ::" + sPort7.PortName + "::: Error");
                         }
                     }
                     catch (Exception ex)
                     {
+                        list.Remove(messages[0].id);
                         //
                     }
                 }
-                apiLink = "done/" + messages[0].id;
-                result = _client.GetAsync(apiLink).Result;  // Blocking call!
+                else
+                {
+                    apiLink = "done/" + messages[0].id;
+                    result = _client.GetAsync(apiLink).Result;
+                }
+ 
                
             }
             else
@@ -1126,24 +1169,30 @@ namespace SMSapplication
                         if (buffer.EndsWith("\r\nOK\r\n"))
                         {
 
-                            keyValue++;
+                            apiLink = "done/" + messages[0].id;
+                            result = _client.GetAsync(apiLink).Result;
                             ShowLog("SMS:" + sPort8.PortName + ":::" + messages[0].mobile + "::: Successfull");
 
 
                         }
                         if (buffer.EndsWith("\r\nERROR\r\n"))
                         {
-
+                            list.Remove(messages[0].id);
                             ShowLog("SMS ::" + sPort8.PortName + "::: Error");
                         }
                     }
                     catch (Exception ex)
                     {
+                        list.Remove(messages[0].id);
                         //
                     }
                 }
-                apiLink = "done/" + messages[0].id;
-                result = _client.GetAsync(apiLink).Result;  // Blocking call!
+                else
+                {
+                    apiLink = "done/" + messages[0].id;
+                    result = _client.GetAsync(apiLink).Result;  // Blocking call!
+                }
+             
                 
             }
             else
@@ -1181,14 +1230,7 @@ namespace SMSapplication
                     //lblTotal.Text = Process.GetCurrentProcess().Threads.Count.ToString();
                 }));
             } 
-            if (lblThread.InvokeRequired)
-            {
-                lblThread.Invoke(new MethodInvoker(delegate {
-
-                    //lblTotal.Text = list.Count.ToString();
-                    lblThread.Text = Process.GetCurrentProcess().Threads.Count.ToString();
-                }));
-            }
+          
            
         }
         #endregion
