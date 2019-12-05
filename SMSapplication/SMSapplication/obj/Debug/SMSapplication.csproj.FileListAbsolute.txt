@@ -31,7 +31,6 @@ D:\TEMP\ATSMS\SMSapplication\SMSapplication\bin\Debug\Newtonsoft.Json.xml
 D:\TEMP\ATSMS\SMSapplication\SMSapplication\bin\Debug\System.Net.Http.xml
 D:\TEMP\ATSMS\SMSapplication\SMSapplication\bin\Debug\System.Net.Http.Formatting.xml
 D:\TEMP\ATSMS\SMSapplication\SMSapplication\bin\Debug\System.Net.Http.WebRequest.xml
-D:\TEMP\ATSMS\SMSapplication\SMSapplication\obj\Debug\SMSapplication.csprojAssemblyReference.cache
 D:\TEMP\ATSMS\SMSapplication\SMSapplication\obj\Debug\SMSapplication.SMSapplication.resources
 D:\TEMP\ATSMS\SMSapplication\SMSapplication\obj\Debug\SMSapplication.Properties.Resources.resources
 D:\TEMP\ATSMS\SMSapplication\SMSapplication\obj\Debug\SMSapplication.csproj.GenerateResource.cache
@@ -40,3 +39,5 @@ D:\TEMP\ATSMS\SMSapplication\SMSapplication\obj\Debug\SMSapplication.application
 D:\TEMP\ATSMS\SMSapplication\SMSapplication\obj\Debug\SMSapplication.csproj.CopyComplete
 D:\TEMP\ATSMS\SMSapplication\SMSapplication\obj\Debug\SMSapplication.exe
 D:\TEMP\ATSMS\SMSapplication\SMSapplication\obj\Debug\SMSapplication.pdb
+D:\TEMP\ATSMS\SMSapplication\SMSapplication\bin\Debug\PDUConverter.dll
+D:\TEMP\ATSMS\SMSapplication\SMSapplication\obj\Debug\SMSapplication.csprojAssemblyReference.cache

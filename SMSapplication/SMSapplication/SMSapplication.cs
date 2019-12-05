@@ -211,122 +211,15 @@ namespace SMSapplication
 
 
         }
+       
         private void Thread1()
         {
-            string baseUrl = "http://easybulksmsbd.com/";
-            string apiLink = "getList";
-            Message[] messages = new Message[0];
-            HttpClient _client = new HttpClient();
-            _client.BaseAddress = new Uri(baseUrl);
-            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage result = _client.GetAsync(apiLink).Result;  // Blocking call!
-            if (result.IsSuccessStatusCode)
+            string name = "";
+            if (port1.InvokeRequired)
             {
-                messages = result.Content.ReadAsAsync<Message[]>().Result;
-
+                port1.Invoke(new MethodInvoker(delegate { name = port1.Text; }));
             }
-            if (messages.Length > 0 && !list.Contains(messages[0].id))
-            {
-                list.Add(messages[0].id);
-               
-                if (!sPort1.IsOpen)
-                {
-                    string name = "";
-                    if (port1.InvokeRequired)
-                    {
-                        port1.Invoke(new MethodInvoker(delegate { name = port1.Text; }));
-                    }
-                    sPort1 = OpenPort(name, baudRate, dataBits, readtimeOut, writeTimeOut);
-                }
-                if (messages[0].mobile.Length > 11)
-                {
-                    messages[0].mobile = messages[0].mobile.Substring(3, messages[0].mobile.Length - 3);
-                    messages[0].mobile = "0" + messages[0].mobile;
-                }
-
-                if (messages[0].mobile.Length == 11)
-                {
-
-                    try
-                    {
-                        sPort1.Write("AT" + (char)Keys.Enter);
-                        string buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort1.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-
-                            ShowLog("PORT :: Error");
-                        }
-                        sPort1.Write("AT+CMGF=1" + (char)Keys.Enter);
-                        buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort1.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-
-                     
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-                            ShowLog("FORMAT :: Error");
-                        }
-
-                        String command = "AT+CMGS=\"" + messages[0].mobile + "\"";
-                        sPort1.Write(command + (char)Keys.Enter);
-                        sPort1.Write(messages[0].text.Replace("\r\n", ((char)Keys.Enter).ToString()) + (char)26);
-
-                         buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort1.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-                        if (buffer.EndsWith("\r\nOK\r\n"))
-                        {
-                          
-                            apiLink = "done/" + messages[0].id;
-                            result = _client.GetAsync(apiLink).Result;
-                            ShowLog("SMS:" + sPort1.PortName + ":::" + messages[0].mobile + "::: Successfull");
-                            
-                        }
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-                            list.Remove(messages[0].id);
-                            ShowLog("SMS ::" + sPort1.PortName + "::: Error");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        list.Remove(messages[0].id);
-                        //
-                    }
-                }
-                else
-                {
-                    apiLink = "done/" + messages[0].id;
-                    result = _client.GetAsync(apiLink).Result;
-                   
-                }
-                // Blocking call!
-                
-            }
-            else
-            {
-                ShowLog(sPort1.PortName + "::: No Message Find");
-
-            }
-            
+            sPort1= SMSSend(sPort1, name);
         }
         #endregion
 
@@ -342,115 +235,12 @@ namespace SMSapplication
 
         private void Thread2()
         {
-            string baseUrl = "http://easybulksmsbd.com/";
-            string apiLink = "getList";
-            Message[] messages = new Message[0];
-            HttpClient _client = new HttpClient();
-            _client.BaseAddress = new Uri(baseUrl);
-            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage result = _client.GetAsync(apiLink).Result;  // Blocking call!
-            if (result.IsSuccessStatusCode)
+            string name = "";
+            if (port2.InvokeRequired)
             {
-                messages = result.Content.ReadAsAsync<Message[]>().Result;
+                port2.Invoke(new MethodInvoker(delegate { name = port2.Text; }));
             }
-            if (messages.Length > 0 && !list.Contains(messages[0].id))
-            {
-                list.Add(messages[0].id);
-               
-                if (!sPort2.IsOpen)
-                {
-                    string name = "";
-                    if (port2.InvokeRequired)
-                    {
-                        port2.Invoke(new MethodInvoker(delegate { name = port2.Text; }));
-                    }
-                    sPort2 = OpenPort(name, baudRate, dataBits, readtimeOut, writeTimeOut);
-                }
-                if (messages[0].mobile.Length > 11)
-                {
-                    messages[0].mobile = messages[0].mobile.Substring(3, messages[0].mobile.Length - 3);
-                    messages[0].mobile = "0" + messages[0].mobile;
-                }
-
-                if (messages[0].mobile.Length == 11)
-                {
-                    try
-                    {
-                        sPort2.Write("AT" + (char)Keys.Enter);
-                        string buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort2.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-
-                            ShowLog("PORT :: Error");
-                        }
-                        sPort2.Write("AT+CMGF=1" + (char)Keys.Enter);
-                        buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort2.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-
-
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-                            ShowLog("FORMAT :: Error");
-                        }
-
-                        String command = "AT+CMGS=\"" + messages[0].mobile + "\"";
-                        sPort2.Write(command + (char)Keys.Enter);
-                        sPort2.Write(messages[0].text.Replace("\r\n", ((char)Keys.Enter).ToString()) + (char)26);
-
-                        buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort2.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-                        if (buffer.EndsWith("\r\nOK\r\n"))
-                        {
-
-                            apiLink = "done/" + messages[0].id;
-                            result = _client.GetAsync(apiLink).Result;  // Blocking call!
-                            ShowLog("SMS:" + sPort2.PortName + ":::" + messages[0].mobile + "::: Successfull");
-
-                        }
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-                            list.Remove(messages[0].id);
-                            ShowLog("SMS ::" + sPort2.PortName + "::: Error");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        list.Remove(messages[0].id);
-                        //
-                    }
-                }
-                else
-                {
-                    apiLink = "done/" + messages[0].id;
-                    result = _client.GetAsync(apiLink).Result;  // Blocking call!
-                }
-              
-             
-            }
-            else
-            {
-                ShowLog(sPort2.PortName + "::: No Message Find");
-            }
+            sPort2= SMSSend(sPort2, name);
         }
         #endregion  
         
@@ -465,116 +255,12 @@ namespace SMSapplication
         }
         private void Thread3()
         {
-            string baseUrl = "http://easybulksmsbd.com/";
-            string apiLink = "getList";
-            Message[] messages = new Message[0];
-            HttpClient _client = new HttpClient();
-            _client.BaseAddress = new Uri(baseUrl);
-            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage result = _client.GetAsync(apiLink).Result;  // Blocking call!
-            if (result.IsSuccessStatusCode)
+            string name = "";
+            if (port3.InvokeRequired)
             {
-                messages = result.Content.ReadAsAsync<Message[]>().Result;
-
+                port3.Invoke(new MethodInvoker(delegate { name = port3.Text; }));
             }
-            if (messages.Length > 0 && !list.Contains(messages[0].id))
-            {
-                list.Add(messages[0].id);
-               
-                if (!sPort3.IsOpen)
-                {
-                    string name = "";
-                    if (port3.InvokeRequired)
-                    {
-                        port3.Invoke(new MethodInvoker(delegate { name = port3.Text; }));
-                    }
-                    sPort3 = OpenPort(name, baudRate, dataBits, readtimeOut, writeTimeOut);
-                }
-                if (messages[0].mobile.Length > 11)
-                {
-                    messages[0].mobile = messages[0].mobile.Substring(3, messages[0].mobile.Length - 3);
-                    messages[0].mobile = "0" + messages[0].mobile;
-                }
-
-                if (messages[0].mobile.Length == 11)
-                {
-                    try
-                    {
-                        sPort3.Write("AT" + (char)Keys.Enter);
-                        string buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort3.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-
-                            ShowLog("PORT :: Error");
-                        }
-                        sPort3.Write("AT+CMGF=1" + (char)Keys.Enter);
-                        buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort3.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-
-
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-                            ShowLog("FORMAT :: Error");
-                        }
-
-                        String command = "AT+CMGS=\"" + messages[0].mobile + "\"";
-                        sPort3.Write(command + (char)Keys.Enter);
-                        sPort3.Write(messages[0].text.Replace("\r\n", ((char)Keys.Enter).ToString()) + (char)26);
-
-                        buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort3.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-                        if (buffer.EndsWith("\r\nOK\r\n"))
-                        {
-
-                            apiLink = "done/" + messages[0].id;
-                            result = _client.GetAsync(apiLink).Result;  // Blocking call!
-                            ShowLog("SMS:" + sPort3.PortName + ":::" + messages[0].mobile + "::: Successfull");
-
-                        }
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-                            list.Remove(messages[0].id);
-                            ShowLog("SMS ::" + sPort3.PortName + "::: Error");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        list.Remove(messages[0].id);
-                        //
-                    }
-                }
-                else
-                {
-                    apiLink = "done/" + messages[0].id;
-                    result = _client.GetAsync(apiLink).Result;  // Blocking call!
-                }
-             
-                
-            }
-            else
-            {
-                ShowLog(sPort3.PortName + "::: No Message Find");
-            }
+            sPort3= SMSSend(sPort3, name);
         }
         #endregion 
         
@@ -587,117 +273,12 @@ namespace SMSapplication
         }
         private void Thread4()
         {
-            string baseUrl = "http://easybulksmsbd.com/";
-            string apiLink = "getList";
-            Message[] messages = new Message[0];
-            HttpClient _client = new HttpClient();
-            _client.BaseAddress = new Uri(baseUrl);
-            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage result = _client.GetAsync(apiLink).Result;  // Blocking call!
-            if (result.IsSuccessStatusCode)
+            string name = "";
+            if (port4.InvokeRequired)
             {
-                messages = result.Content.ReadAsAsync<Message[]>().Result;
-
+                port4.Invoke(new MethodInvoker(delegate { name = port4.Text; }));
             }
-            if (messages.Length > 0 && !list.Contains(messages[0].id))
-            {
-                list.Add(messages[0].id);
-                
-                if (!sPort4.IsOpen)
-                {
-                    string name = "";
-                    if (port4.InvokeRequired)
-                    {
-                        port4.Invoke(new MethodInvoker(delegate { name = port4.Text; }));
-                    }
-                    sPort4 = OpenPort(name, baudRate, dataBits, readtimeOut, writeTimeOut);
-                }
-                if (messages[0].mobile.Length > 11)
-                {
-                    messages[0].mobile = messages[0].mobile.Substring(3, messages[0].mobile.Length - 3);
-                    messages[0].mobile = "0" + messages[0].mobile;
-                }
-
-                if (messages[0].mobile.Length == 11)
-                {
-                    try
-                    {
-                        sPort4.Write("AT" + (char)Keys.Enter);
-                        string buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort4.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-
-                            ShowLog("PORT :: Error");
-                        }
-                        sPort4.Write("AT+CMGF=1" + (char)Keys.Enter);
-                        buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort4.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-
-
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-                            ShowLog("FORMAT :: Error");
-                        }
-
-                        String command = "AT+CMGS=\"" + messages[0].mobile + "\"";
-                        sPort4.Write(command + (char)Keys.Enter);
-                        sPort4.Write(messages[0].text.Replace("\r\n", ((char)Keys.Enter).ToString()) + (char)26);
-
-                         buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort4.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-                        if (buffer.EndsWith("\r\nOK\r\n"))
-                        {
-
-                            apiLink = "done/" + messages[0].id;
-                            result = _client.GetAsync(apiLink).Result;  // Blocking call!
-                            ShowLog("SMS:" + sPort4.PortName + ":::" + messages[0].mobile + "::: Successfull");
-
-
-                        }
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-                            list.Remove(messages[0].id);
-                            ShowLog("SMS ::" + sPort4.PortName + "::: Error");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        list.Remove(messages[0].id);
-                        //
-                    }
-                }
-                else
-                {
-                    apiLink = "done/" + messages[0].id;
-                    result = _client.GetAsync(apiLink).Result;  // Blocking call!
-                }
-              
-               
-            }
-            else
-            {
-                ShowLog(sPort4.PortName + "::: No Message Find");
-            }
+            sPort4= SMSSend(sPort4, name);
         }
         #endregion
         
@@ -712,116 +293,12 @@ namespace SMSapplication
         }
         private void Thread5()
         {
-            string baseUrl = "http://easybulksmsbd.com/";
-            string apiLink = "getList";
-            Message[] messages = new Message[0];
-            HttpClient _client = new HttpClient();
-            _client.BaseAddress = new Uri(baseUrl);
-            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage result = _client.GetAsync(apiLink).Result;  // Blocking call!
-            if (result.IsSuccessStatusCode)
+            string name = "";
+            if (port5.InvokeRequired)
             {
-                messages = result.Content.ReadAsAsync<Message[]>().Result;
-
+                port5.Invoke(new MethodInvoker(delegate { name = port5.Text; }));
             }
-            if (messages.Length > 0 && !list.Contains(messages[0].id))
-            {
-                list.Add(messages[0].id);
-               
-                if (!sPort5.IsOpen)
-                {
-                    string name = "";
-                    if (port5.InvokeRequired)
-                    {
-                        port5.Invoke(new MethodInvoker(delegate { name = port5.Text; }));
-                    }
-                    sPort5 = OpenPort(name, baudRate, dataBits, readtimeOut, writeTimeOut);
-                }
-                if (messages[0].mobile.Length > 11)
-                {
-                    messages[0].mobile = messages[0].mobile.Substring(3, messages[0].mobile.Length - 3);
-                    messages[0].mobile = "0" + messages[0].mobile;
-                }
-
-                if (messages[0].mobile.Length == 11)
-                {
-                    try
-                    {
-                        sPort5.Write("AT" + (char)Keys.Enter);
-                        string buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort5.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-
-                            ShowLog("PORT :: Error");
-                        }
-                        sPort5.Write("AT+CMGF=1" + (char)Keys.Enter);
-                        buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort5.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-
-
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-                            ShowLog("FORMAT :: Error");
-                        }
-
-                        String command = "AT+CMGS=\"" + messages[0].mobile + "\"";
-                        sPort5.Write(command + (char)Keys.Enter);
-                        sPort5.Write(messages[0].text.Replace("\r\n", ((char)Keys.Enter).ToString()) + (char)26);
-
-                         buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort5.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-                        if (buffer.EndsWith("\r\nOK\r\n"))
-                        {
-                            apiLink = "done/" + messages[0].id;
-                            result = _client.GetAsync(apiLink).Result;  // Blocking call!
-                            ShowLog("SMS:" + sPort5.PortName + ":::" + messages[0].mobile + "::: Successfull");
-
-                        }
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-                            list.Remove(messages[0].id);
-                            ShowLog("SMS ::" + sPort5.PortName + "::: Error");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        list.Remove(messages[0].id);
-                        //
-                    }
-                }
-                else
-                {
-                    apiLink = "done/" + messages[0].id;
-                    result = _client.GetAsync(apiLink).Result;  // Blocking call!
-                }
-            
-              
-
-            }
-            else
-            {
-                ShowLog(sPort5.PortName + "::: No Message Find");
-            }
+            sPort5= SMSSend(sPort5, name);
         }
         #endregion   
 
@@ -837,118 +314,12 @@ namespace SMSapplication
         }
         private void Thread6()
         {
-            string baseUrl = "http://easybulksmsbd.com/";
-            string apiLink = "getList";
-            Message[] messages = new Message[0];
-            HttpClient _client = new HttpClient();
-            _client.BaseAddress = new Uri(baseUrl);
-            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage result = _client.GetAsync(apiLink).Result;  // Blocking call!
-            if (result.IsSuccessStatusCode)
+            string name = "";
+            if (port6.InvokeRequired)
             {
-                messages = result.Content.ReadAsAsync<Message[]>().Result;
-
+                port6.Invoke(new MethodInvoker(delegate { name = port6.Text; }));
             }
-            if (messages.Length > 0 && !list.Contains(messages[0].id))
-            {
-                list.Add(messages[0].id);
-               
-                if (!sPort6.IsOpen)
-                {
-                    string name = "";
-                    if (port6.InvokeRequired)
-                    {
-                        port6.Invoke(new MethodInvoker(delegate { name = port6.Text; }));
-                    }
-                    sPort6 = OpenPort(name, baudRate, dataBits, readtimeOut, writeTimeOut);
-                }
-                if (messages[0].mobile.Length > 11)
-                {
-                    messages[0].mobile = messages[0].mobile.Substring(3, messages[0].mobile.Length - 3);
-                    messages[0].mobile = "0" + messages[0].mobile;
-                }
-
-                if (messages[0].mobile.Length == 11)
-                {
-                    try
-                    {
-                        sPort6.Write("AT" + (char)Keys.Enter);
-                        string buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort6.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-
-                            ShowLog("PORT :: Error");
-                        }
-                        sPort6.Write("AT+CMGF=1" + (char)Keys.Enter);
-                        buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort6.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-
-
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-                            ShowLog("FORMAT :: Error");
-                        }
-
-                        String command = "AT+CMGS=\"" + messages[0].mobile + "\"";
-                        sPort6.Write(command + (char)Keys.Enter);
-                        sPort6.Write(messages[0].text.Replace("\r\n", ((char)Keys.Enter).ToString()) + (char)26);
-
-                         buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort6.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-                        if (buffer.EndsWith("\r\nOK\r\n"))
-                        {
-
-                            apiLink = "done/" + messages[0].id;
-                            result = _client.GetAsync(apiLink).Result;  // Blocking call!
-                            ShowLog("SMS:" + sPort6.PortName + ":::" + messages[0].mobile + "::: Successfull");
-
-
-                        }
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-                            list.Remove(messages[0].id);
-                            ShowLog("SMS ::" + sPort6.PortName + "::: Error");
-                        }
-                    }
-                    catch (Exception ex)
-
-                    {
-                        list.Remove(messages[0].id);
-                        //
-                    }
-                }
-                else
-                {
-                    apiLink = "done/" + messages[0].id;
-                    result = _client.GetAsync(apiLink).Result;  // Blocking call!
-                }
-               
-                
-            }
-            else
-            {
-                ShowLog(sPort6.PortName + "::: No Message Find");
-            }
+            sPort6= SMSSend(sPort6, name);
         }
         #endregion 
         
@@ -963,116 +334,12 @@ namespace SMSapplication
         }
         private void Thread7()
         {
-            string baseUrl = "http://easybulksmsbd.com/";
-            string apiLink = "getList";
-            Message[] messages = new Message[0];
-            HttpClient _client = new HttpClient();
-            _client.BaseAddress = new Uri(baseUrl);
-            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage result = _client.GetAsync(apiLink).Result;  // Blocking call!
-            if (result.IsSuccessStatusCode)
+            string name = "";
+            if (port7.InvokeRequired)
             {
-                messages = result.Content.ReadAsAsync<Message[]>().Result;
-
+                port7.Invoke(new MethodInvoker(delegate { name = port7.Text; }));
             }
-            if (messages.Length > 0 && !list.Contains(messages[0].id))
-            {
-                list.Add(messages[0].id);
-                
-                if (!sPort7.IsOpen)
-                {
-                    string name = "";
-                    if (port7.InvokeRequired)
-                    {
-                        port7.Invoke(new MethodInvoker(delegate { name = port7.Text; }));
-                    }
-                    sPort7 = OpenPort(name, baudRate, dataBits, readtimeOut, writeTimeOut);
-                }
-                if (messages[0].mobile.Length > 11)
-                {
-                    messages[0].mobile = messages[0].mobile.Substring(3, messages[0].mobile.Length - 3);
-                    messages[0].mobile = "0" + messages[0].mobile;
-                }
-
-                if (messages[0].mobile.Length == 11)
-                {
-                    try
-                    {
-                        sPort7.Write("AT" + (char)Keys.Enter);
-                        string buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort7.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-
-                            ShowLog("PORT :: Error");
-                        }
-                        sPort7.Write("AT+CMGF=1" + (char)Keys.Enter);
-                        buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort7.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-
-
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-                            ShowLog("FORMAT :: Error");
-                        }
-
-                        String command = "AT+CMGS=\"" + messages[0].mobile + "\"";
-                        sPort7.Write(command + (char)Keys.Enter);
-                        sPort7.Write(messages[0].text.Replace("\r\n", ((char)Keys.Enter).ToString()) + (char)26);
-
-                       buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort7.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-                        if (buffer.EndsWith("\r\nOK\r\n"))
-                        {
-
-                            apiLink = "done/" + messages[0].id;
-                            result = _client.GetAsync(apiLink).Result;
-                            ShowLog("SMS:" + sPort7.PortName + ":::" + messages[0].mobile + "::: Successfull");
-
-                        }
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-                            list.Remove(messages[0].id);
-                            ShowLog("SMS ::" + sPort7.PortName + "::: Error");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        list.Remove(messages[0].id);
-                        //
-                    }
-                }
-                else
-                {
-                    apiLink = "done/" + messages[0].id;
-                    result = _client.GetAsync(apiLink).Result;
-                }
- 
-               
-            }
-            else
-            {
-                ShowLog(sPort7.PortName + "::: No Message Find");
-            }
+            sPort7= SMSSend(sPort7, name);
         }
         #endregion
         
@@ -1088,117 +355,12 @@ namespace SMSapplication
 
         private void Thread8()
         {
-            string baseUrl = "http://easybulksmsbd.com/";
-            string apiLink = "getList";
-            Message[] messages = new Message[0];
-            HttpClient _client = new HttpClient();
-            _client.BaseAddress = new Uri(baseUrl);
-            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage result = _client.GetAsync(apiLink).Result;  // Blocking call!
-            if (result.IsSuccessStatusCode)
+            string name = "";
+            if (port8.InvokeRequired)
             {
-                messages = result.Content.ReadAsAsync<Message[]>().Result;
-
+                port8.Invoke(new MethodInvoker(delegate { name = port8.Text; }));
             }
-            if (messages.Length > 0 && !list.Contains(messages[0].id))
-            {
-                list.Add(messages[0].id);
-                
-                if (!sPort8.IsOpen)
-                {
-                    string name = "";
-                    if (port8.InvokeRequired)
-                    {
-                        port8.Invoke(new MethodInvoker(delegate { name = port8.Text; }));
-                    }
-                    sPort8 = OpenPort(name, baudRate, dataBits, readtimeOut, writeTimeOut);
-                }
-                if (messages[0].mobile.Length > 11)
-                {
-                    messages[0].mobile = messages[0].mobile.Substring(3, messages[0].mobile.Length - 3);
-                    messages[0].mobile = "0" + messages[0].mobile;
-                }
-
-                if (messages[0].mobile.Length == 11)
-                {
-                    try
-                    {
-                        sPort8.Write("AT" + (char)Keys.Enter);
-                        string buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort8.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-
-                            ShowLog("PORT :: Error");
-                        }
-                        sPort8.Write("AT+CMGF=1" + (char)Keys.Enter);
-                        buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort8.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-
-
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-                            ShowLog("FORMAT :: Error");
-                        }
-
-                        String command = "AT+CMGS=\"" + messages[0].mobile + "\"";
-                        sPort8.Write(command + (char)Keys.Enter);
-                        sPort8.Write(messages[0].text.Replace("\r\n", ((char)Keys.Enter).ToString()) + (char)26);
-
-                         buffer = string.Empty;
-                        do
-                        {
-                            string t = sPort8.ReadExisting();
-                            buffer += t;
-
-                        }
-                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-                        if (buffer.EndsWith("\r\nOK\r\n"))
-                        {
-
-                            apiLink = "done/" + messages[0].id;
-                            result = _client.GetAsync(apiLink).Result;
-                            ShowLog("SMS:" + sPort8.PortName + ":::" + messages[0].mobile + "::: Successfull");
-
-
-                        }
-                        if (buffer.EndsWith("\r\nERROR\r\n"))
-                        {
-                            list.Remove(messages[0].id);
-                            ShowLog("SMS ::" + sPort8.PortName + "::: Error");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        list.Remove(messages[0].id);
-                        //
-                    }
-                }
-                else
-                {
-                    apiLink = "done/" + messages[0].id;
-                    result = _client.GetAsync(apiLink).Result;  // Blocking call!
-                }
-             
-                
-            }
-            else
-            {
-                ShowLog(sPort8.PortName + "::: No Message Find");
-            }
+            sPort8 = SMSSend(sPort8, name);
         }
         #endregion
 
@@ -1206,7 +368,7 @@ namespace SMSapplication
 
 
 
-        #region Show Log
+        #region Common Region
         public void ShowLog(string log)
         {
            
@@ -1233,14 +395,123 @@ namespace SMSapplication
           
            
         }
+        private SerialPort SMSSend(SerialPort port, string portName)
+        {
+            string baseUrl = "http://easybulksmsbd.com/";
+            string apiLink = "getList";
+            Message[] messages = new Message[0];
+            HttpClient _client = new HttpClient();
+            _client.BaseAddress = new Uri(baseUrl);
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            HttpResponseMessage result = _client.GetAsync(apiLink).Result;  // Blocking call!
+            if (result.IsSuccessStatusCode)
+            {
+                messages = result.Content.ReadAsAsync<Message[]>().Result;
+
+            }
+            if (messages.Length > 0 && !list.Contains(messages[0].id))
+            {
+                list.Add(messages[0].id);
+
+                if (!port.IsOpen)
+                {
+
+                    port = OpenPort(portName, baudRate, dataBits, readtimeOut, writeTimeOut);
+                }
+                if (messages[0].mobile.Length > 11)
+                {
+                    messages[0].mobile = messages[0].mobile.Substring(3, messages[0].mobile.Length - 3);
+                    messages[0].mobile = "0" + messages[0].mobile;
+                }
+
+                if (messages[0].mobile.Length == 11)
+                {
+
+                    try
+                    {
+                        port.Write("AT" + (char)Keys.Enter);
+                        string buffer = string.Empty;
+                        do
+                        {
+                            string t = port.ReadExisting();
+                            buffer += t;
+
+                        }
+                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
+
+                        if (buffer.EndsWith("\r\nERROR\r\n"))
+                        {
+
+                            ShowLog(port.PortName + ":: AT :: Error");
+                        }
+                        port.Write("AT+CMGF=1" + (char)Keys.Enter);
+                        buffer = string.Empty;
+                        do
+                        {
+                            string t = port.ReadExisting();
+                            buffer += t;
+
+                        }
+                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
+
+
+                        if (buffer.EndsWith("\r\nERROR\r\n"))
+                        {
+                            ShowLog(port.PortName + "::AT format :: Error");
+                        }
+
+                        String command = "AT+CMGS=\"" + messages[0].mobile + "\"";
+                        port.Write(command + (char)Keys.Enter);
+                        port.Write(messages[0].text.Replace("\r\n", ((char)Keys.Enter).ToString()) + (char)26);
+
+                        buffer = string.Empty;
+                        do
+                        {
+                            string t = port.ReadExisting();
+                            buffer += t;
+
+                        }
+                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
+                        if (buffer.EndsWith("\r\nOK\r\n"))
+                        {
+
+                            apiLink = "done/" + messages[0].id;
+                            result = _client.GetAsync(apiLink).Result;
+                            ShowLog("SMS:" + port.PortName + ":::" + messages[0].mobile + "::: Successfull");
+
+                        }
+                        if (buffer.EndsWith("\r\nERROR\r\n"))
+                        {
+                            list.Remove(messages[0].id);
+                            ShowLog("SMS ::" + port.PortName + "::: Error");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        list.Remove(messages[0].id);
+                        ShowLog("Expection::" + ex.Message);
+                        //
+                    }
+                }
+                else
+                {
+                    apiLink = "done/" + messages[0].id;
+                    result = _client.GetAsync(apiLink).Result;
+
+                }
+                // Blocking call!
+
+            }
+            else
+            {
+                ShowLog(port.PortName + "::: No Message Find");
+
+            }
+            return port;
+        }
         #endregion
 
 
-
-
-
-
-      
         private void button1_Click(object sender, EventArgs e)
         {
             ClosePort(sPort1);
