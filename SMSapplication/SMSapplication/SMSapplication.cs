@@ -36,7 +36,7 @@ namespace SMSapplication
         public int dataBits = 0;
         public int readtimeOut = 0;
         public int writeTimeOut = 0;
-       public int interval = 500;
+        public int interval = 500;
         public SMSapplication()
         {
             InitializeComponent();
@@ -162,7 +162,7 @@ namespace SMSapplication
             dataBits = Convert.ToInt32(cboDataBits.Text);
             readtimeOut = Convert.ToInt32(txtReadTimeOut.Text);
             writeTimeOut = Convert.ToInt32(txtWriteTimeOut.Text);
-             interval = Convert.ToInt32(txtInterval.Text);
+            interval = Convert.ToInt32(txtInterval.Text);
             timer1.Enabled = true;
             timer2.Enabled = true;
             timer3.Enabled = true;
@@ -195,13 +195,13 @@ namespace SMSapplication
             Thread.Sleep(interval);
             timer7.Interval = interval;
             timer7.Tick += Timer7_Tick;
-             Thread.Sleep(interval);
+            Thread.Sleep(interval);
             timer8.Interval = interval;
             timer8.Tick += Timer8_Tick;
         }
         #endregion
 
-   
+
         #region Timer1
         private void Timer1_Tick(object sender, EventArgs e)
         {
@@ -219,16 +219,26 @@ namespace SMSapplication
             HttpClient _client = new HttpClient();
             _client.BaseAddress = new Uri(baseUrl);
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage result = _client.GetAsync(apiLink).Result;  // Blocking call!
-            if (result.IsSuccessStatusCode)
+            // Blocking call!
+            HttpResponseMessage result;
+            try
             {
-                messages = result.Content.ReadAsAsync<Message[]>().Result;
-
+                result = _client.GetAsync(apiLink).Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    messages = result.Content.ReadAsAsync<Message[]>().Result;
+                }
             }
+            catch (Exception r)
+            {
+                ShowLog("Api:: Format Error");
+            }
+
+
             if (messages.Length > 0 && !list.Contains(messages[0].id))
             {
                 list.Add(messages[0].id);
-               
+
                 if (!sPort1.IsOpen)
                 {
                     string name = "";
@@ -274,7 +284,7 @@ namespace SMSapplication
                         }
                         while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
 
-                     
+
                         if (buffer.EndsWith("\r\nERROR\r\n"))
                         {
                             ShowLog("FORMAT :: Error");
@@ -284,7 +294,7 @@ namespace SMSapplication
                         sPort1.Write(command + (char)Keys.Enter);
                         sPort1.Write(messages[0].text.Replace("\r\n", ((char)Keys.Enter).ToString()) + (char)26);
 
-                         buffer = string.Empty;
+                        buffer = string.Empty;
                         do
                         {
                             string t = sPort1.ReadExisting();
@@ -294,11 +304,11 @@ namespace SMSapplication
                         while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
                         if (buffer.EndsWith("\r\nOK\r\n"))
                         {
-                          
+
                             apiLink = "done/" + messages[0].id;
                             result = _client.GetAsync(apiLink).Result;
                             ShowLog("SMS:" + sPort1.PortName + ":::" + messages[0].mobile + "::: Successfull");
-                            
+
                         }
                         if (buffer.EndsWith("\r\nERROR\r\n"))
                         {
@@ -309,24 +319,25 @@ namespace SMSapplication
                     catch (Exception ex)
                     {
                         list.Remove(messages[0].id);
+                        ShowLog("Exception ::" + ex.Message);
                         //
                     }
                 }
                 else
                 {
                     apiLink = "done/" + messages[0].id;
-                    result = _client.GetAsync(apiLink).Result;
-                   
+                     _client.GetAsync(apiLink);
+
                 }
                 // Blocking call!
-                
+
             }
             else
             {
                 ShowLog(sPort1.PortName + "::: No Message Find");
 
             }
-            
+
         }
         #endregion
 
@@ -348,15 +359,23 @@ namespace SMSapplication
             HttpClient _client = new HttpClient();
             _client.BaseAddress = new Uri(baseUrl);
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage result = _client.GetAsync(apiLink).Result;  // Blocking call!
-            if (result.IsSuccessStatusCode)
+            HttpResponseMessage result;
+            try
             {
-                messages = result.Content.ReadAsAsync<Message[]>().Result;
+                result = _client.GetAsync(apiLink).Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    messages = result.Content.ReadAsAsync<Message[]>().Result;
+                }
+            }
+            catch (Exception r)
+            {
+                ShowLog("Api:: Format Error");
             }
             if (messages.Length > 0 && !list.Contains(messages[0].id))
             {
                 list.Add(messages[0].id);
-               
+
                 if (!sPort2.IsOpen)
                 {
                     string name = "";
@@ -437,23 +456,24 @@ namespace SMSapplication
                     {
                         list.Remove(messages[0].id);
                         //
+                        ShowLog("Exception ::" + ex.Message);
                     }
                 }
                 else
                 {
                     apiLink = "done/" + messages[0].id;
-                    result = _client.GetAsync(apiLink).Result;  // Blocking call!
+                    _client.GetAsync(apiLink);  // Blocking call!
                 }
-              
-             
+
+
             }
             else
             {
                 ShowLog(sPort2.PortName + "::: No Message Find");
             }
         }
-        #endregion  
-        
+        #endregion
+
         #region Timer3
         private void Timer3_Tick(object sender, EventArgs e)
         {
@@ -471,16 +491,23 @@ namespace SMSapplication
             HttpClient _client = new HttpClient();
             _client.BaseAddress = new Uri(baseUrl);
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage result = _client.GetAsync(apiLink).Result;  // Blocking call!
-            if (result.IsSuccessStatusCode)
+            HttpResponseMessage result;
+            try
             {
-                messages = result.Content.ReadAsAsync<Message[]>().Result;
-
+                result = _client.GetAsync(apiLink).Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    messages = result.Content.ReadAsAsync<Message[]>().Result;
+                }
+            }
+            catch (Exception r)
+            {
+                ShowLog("Api:: Format Error");
             }
             if (messages.Length > 0 && !list.Contains(messages[0].id))
             {
                 list.Add(messages[0].id);
-               
+
                 if (!sPort3.IsOpen)
                 {
                     string name = "";
@@ -561,23 +588,24 @@ namespace SMSapplication
                     {
                         list.Remove(messages[0].id);
                         //
+                        ShowLog("Exception ::" + ex.Message);
                     }
                 }
                 else
                 {
                     apiLink = "done/" + messages[0].id;
-                    result = _client.GetAsync(apiLink).Result;  // Blocking call!
+                     _client.GetAsync(apiLink);  // Blocking call!
                 }
-             
-                
+
+
             }
             else
             {
                 ShowLog(sPort3.PortName + "::: No Message Find");
             }
         }
-        #endregion 
-        
+        #endregion
+
         #region Timer4
         private void Timer4_Tick(object sender, EventArgs e)
         {
@@ -593,16 +621,23 @@ namespace SMSapplication
             HttpClient _client = new HttpClient();
             _client.BaseAddress = new Uri(baseUrl);
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage result = _client.GetAsync(apiLink).Result;  // Blocking call!
-            if (result.IsSuccessStatusCode)
+            HttpResponseMessage result;
+            try
             {
-                messages = result.Content.ReadAsAsync<Message[]>().Result;
-
+                result = _client.GetAsync(apiLink).Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    messages = result.Content.ReadAsAsync<Message[]>().Result;
+                }
+            }
+            catch (Exception r)
+            {
+                ShowLog("Api:: Format Error");
             }
             if (messages.Length > 0 && !list.Contains(messages[0].id))
             {
                 list.Add(messages[0].id);
-                
+
                 if (!sPort4.IsOpen)
                 {
                     string name = "";
@@ -657,7 +692,7 @@ namespace SMSapplication
                         sPort4.Write(command + (char)Keys.Enter);
                         sPort4.Write(messages[0].text.Replace("\r\n", ((char)Keys.Enter).ToString()) + (char)26);
 
-                         buffer = string.Empty;
+                        buffer = string.Empty;
                         do
                         {
                             string t = sPort4.ReadExisting();
@@ -684,15 +719,16 @@ namespace SMSapplication
                     {
                         list.Remove(messages[0].id);
                         //
+                        ShowLog("Exception ::" + ex.Message);
                     }
                 }
                 else
                 {
                     apiLink = "done/" + messages[0].id;
-                    result = _client.GetAsync(apiLink).Result;  // Blocking call!
+                    _client.GetAsync(apiLink);  // Blocking call!
                 }
-              
-               
+
+
             }
             else
             {
@@ -700,7 +736,7 @@ namespace SMSapplication
             }
         }
         #endregion
-        
+
         #region Timer5
         private void Timer5_Tick(object sender, EventArgs e)
         {
@@ -718,16 +754,23 @@ namespace SMSapplication
             HttpClient _client = new HttpClient();
             _client.BaseAddress = new Uri(baseUrl);
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage result = _client.GetAsync(apiLink).Result;  // Blocking call!
-            if (result.IsSuccessStatusCode)
+            HttpResponseMessage result;
+            try
             {
-                messages = result.Content.ReadAsAsync<Message[]>().Result;
-
+                result = _client.GetAsync(apiLink).Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    messages = result.Content.ReadAsAsync<Message[]>().Result;
+                }
+            }
+            catch (Exception r)
+            {
+                ShowLog("Api:: Format Error");
             }
             if (messages.Length > 0 && !list.Contains(messages[0].id))
             {
                 list.Add(messages[0].id);
-               
+
                 if (!sPort5.IsOpen)
                 {
                     string name = "";
@@ -782,7 +825,7 @@ namespace SMSapplication
                         sPort5.Write(command + (char)Keys.Enter);
                         sPort5.Write(messages[0].text.Replace("\r\n", ((char)Keys.Enter).ToString()) + (char)26);
 
-                         buffer = string.Empty;
+                        buffer = string.Empty;
                         do
                         {
                             string t = sPort5.ReadExisting();
@@ -807,15 +850,16 @@ namespace SMSapplication
                     {
                         list.Remove(messages[0].id);
                         //
+                        ShowLog("Exception ::" + ex.Message);
                     }
                 }
                 else
                 {
                     apiLink = "done/" + messages[0].id;
-                    result = _client.GetAsync(apiLink).Result;  // Blocking call!
+                     _client.GetAsync(apiLink);  // Blocking call!
                 }
-            
-              
+
+
 
             }
             else
@@ -833,7 +877,7 @@ namespace SMSapplication
             var thread = new Thread(Thread6);
             thread.Start();
             //thread.Abort();
-            
+
         }
         private void Thread6()
         {
@@ -843,16 +887,23 @@ namespace SMSapplication
             HttpClient _client = new HttpClient();
             _client.BaseAddress = new Uri(baseUrl);
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage result = _client.GetAsync(apiLink).Result;  // Blocking call!
-            if (result.IsSuccessStatusCode)
+            HttpResponseMessage result;
+            try
             {
-                messages = result.Content.ReadAsAsync<Message[]>().Result;
-
+                result = _client.GetAsync(apiLink).Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    messages = result.Content.ReadAsAsync<Message[]>().Result;
+                }
+            }
+            catch (Exception r)
+            {
+                ShowLog("Api:: Format Error");
             }
             if (messages.Length > 0 && !list.Contains(messages[0].id))
             {
                 list.Add(messages[0].id);
-               
+
                 if (!sPort6.IsOpen)
                 {
                     string name = "";
@@ -907,7 +958,7 @@ namespace SMSapplication
                         sPort6.Write(command + (char)Keys.Enter);
                         sPort6.Write(messages[0].text.Replace("\r\n", ((char)Keys.Enter).ToString()) + (char)26);
 
-                         buffer = string.Empty;
+                        buffer = string.Empty;
                         do
                         {
                             string t = sPort6.ReadExisting();
@@ -935,23 +986,24 @@ namespace SMSapplication
                     {
                         list.Remove(messages[0].id);
                         //
+                        ShowLog("Exception ::" + ex.Message);
                     }
                 }
                 else
                 {
                     apiLink = "done/" + messages[0].id;
-                    result = _client.GetAsync(apiLink).Result;  // Blocking call!
+                    _client.GetAsync(apiLink);  // Blocking call!
                 }
-               
-                
+
+
             }
             else
             {
                 ShowLog(sPort6.PortName + "::: No Message Find");
             }
         }
-        #endregion 
-        
+        #endregion
+
         #region Timer7
         private void Timer7_Tick(object sender, EventArgs e)
         {
@@ -969,16 +1021,23 @@ namespace SMSapplication
             HttpClient _client = new HttpClient();
             _client.BaseAddress = new Uri(baseUrl);
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage result = _client.GetAsync(apiLink).Result;  // Blocking call!
-            if (result.IsSuccessStatusCode)
+            HttpResponseMessage result;
+            try
             {
-                messages = result.Content.ReadAsAsync<Message[]>().Result;
-
+                result = _client.GetAsync(apiLink).Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    messages = result.Content.ReadAsAsync<Message[]>().Result;
+                }
+            }
+            catch (Exception r)
+            {
+                ShowLog("Api:: Format Error");
             }
             if (messages.Length > 0 && !list.Contains(messages[0].id))
             {
                 list.Add(messages[0].id);
-                
+
                 if (!sPort7.IsOpen)
                 {
                     string name = "";
@@ -1033,7 +1092,7 @@ namespace SMSapplication
                         sPort7.Write(command + (char)Keys.Enter);
                         sPort7.Write(messages[0].text.Replace("\r\n", ((char)Keys.Enter).ToString()) + (char)26);
 
-                       buffer = string.Empty;
+                        buffer = string.Empty;
                         do
                         {
                             string t = sPort7.ReadExisting();
@@ -1059,15 +1118,16 @@ namespace SMSapplication
                     {
                         list.Remove(messages[0].id);
                         //
+                        ShowLog("Exception ::" + ex.Message);
                     }
                 }
                 else
                 {
                     apiLink = "done/" + messages[0].id;
-                    result = _client.GetAsync(apiLink).Result;
+                     _client.GetAsync(apiLink);
                 }
- 
-               
+
+
             }
             else
             {
@@ -1075,7 +1135,7 @@ namespace SMSapplication
             }
         }
         #endregion
-        
+
         #region Timer8
         private void Timer8_Tick(object sender, EventArgs e)
         {
@@ -1094,16 +1154,23 @@ namespace SMSapplication
             HttpClient _client = new HttpClient();
             _client.BaseAddress = new Uri(baseUrl);
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage result = _client.GetAsync(apiLink).Result;  // Blocking call!
-            if (result.IsSuccessStatusCode)
+            HttpResponseMessage result;
+            try
             {
-                messages = result.Content.ReadAsAsync<Message[]>().Result;
-
+                result = _client.GetAsync(apiLink).Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    messages = result.Content.ReadAsAsync<Message[]>().Result;
+                }
+            }
+            catch (Exception r)
+            {
+                ShowLog("Api:: Format Error");
             }
             if (messages.Length > 0 && !list.Contains(messages[0].id))
             {
                 list.Add(messages[0].id);
-                
+
                 if (!sPort8.IsOpen)
                 {
                     string name = "";
@@ -1158,7 +1225,7 @@ namespace SMSapplication
                         sPort8.Write(command + (char)Keys.Enter);
                         sPort8.Write(messages[0].text.Replace("\r\n", ((char)Keys.Enter).ToString()) + (char)26);
 
-                         buffer = string.Empty;
+                        buffer = string.Empty;
                         do
                         {
                             string t = sPort8.ReadExisting();
@@ -1185,15 +1252,16 @@ namespace SMSapplication
                     {
                         list.Remove(messages[0].id);
                         //
+                        ShowLog("Exception ::" + ex.Message);
                     }
                 }
                 else
                 {
                     apiLink = "done/" + messages[0].id;
-                    result = _client.GetAsync(apiLink).Result;  // Blocking call!
+                     _client.GetAsync(apiLink);  // Blocking call!
                 }
-             
-                
+
+
             }
             else
             {
@@ -1209,10 +1277,11 @@ namespace SMSapplication
         #region Show Log
         public void ShowLog(string log)
         {
-           
+
             if (listBox1.InvokeRequired)
             {
-                    listBox1.Invoke(new MethodInvoker(delegate {
+                listBox1.Invoke(new MethodInvoker(delegate
+                {
                     if (listBox1.Items.Count > 1000)
                     {
                         listBox1.Items.Clear();
@@ -1224,14 +1293,15 @@ namespace SMSapplication
             }
             if (lblTotal.InvokeRequired)
             {
-                lblTotal.Invoke(new MethodInvoker(delegate {
+                lblTotal.Invoke(new MethodInvoker(delegate
+                {
 
                     lblTotal.Text = list.Count.ToString();
                     //lblTotal.Text = Process.GetCurrentProcess().Threads.Count.ToString();
                 }));
-            } 
-          
-           
+            }
+
+
         }
         #endregion
 
@@ -1240,7 +1310,7 @@ namespace SMSapplication
 
 
 
-      
+
         private void button1_Click(object sender, EventArgs e)
         {
             ClosePort(sPort1);
@@ -1281,6 +1351,6 @@ namespace SMSapplication
         {
             listBox1.Items.Clear();
         }
-      
+
     }
 }
