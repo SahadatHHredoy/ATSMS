@@ -7,13 +7,7 @@ namespace SMSapplication
 {
     public static class Expire
     {
-        public static bool IsValidate()
-        {
-            var date = new DateTime(2019, 12, 10);
-            var dt = DateTime.Now;
-            return dt < date;
-
-        }
+    
         public static int GetRandomNumber()
         {
             return new Random().Next(1, 8);

@@ -58,7 +58,7 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <NoWin32Manifest>true</NoWin32Manifest>
@@ -84,6 +84,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="frmRandomPort.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmRandomPort.Designer.cs">
+      <DependentUpon>frmRandomPort.cs</DependentUpon>
+    </Compile>
     <Compile Include="SMSapplication.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -93,6 +99,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Expire.cs" />
+    <EmbeddedResource Include="frmRandomPort.resx">
+      <DependentUpon>frmRandomPort.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SMSapplication.resx">
       <SubType>Designer</SubType>
       <DependentUpon>SMSapplication.cs</DependentUpon>
