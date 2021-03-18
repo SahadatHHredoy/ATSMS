@@ -34,8 +34,6 @@
             this.gboPortSettings = new System.Windows.Forms.GroupBox();
             this.label8 = new System.Windows.Forms.Label();
             this.txtInterval = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.btnOK = new System.Windows.Forms.Button();
             this.txtWriteTimeOut = new System.Windows.Forms.TextBox();
             this.txtReadTimeOut = new System.Windows.Forms.TextBox();
             this.cboParityBits = new System.Windows.Forms.ComboBox();
@@ -48,18 +46,24 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.btnOK = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.listBox1 = new System.Windows.Forms.ListBox();
+            this.btnDeletePort = new System.Windows.Forms.Button();
+            this.panelPorts = new System.Windows.Forms.Panel();
+            this.lblTotal = new System.Windows.Forms.Label();
+            this.grpPorts.SuspendLayout();
             this.gboPortSettings.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpPorts
             // 
+            this.grpPorts.Controls.Add(this.panelPorts);
             this.grpPorts.Location = new System.Drawing.Point(12, 21);
             this.grpPorts.Name = "grpPorts";
-            this.grpPorts.Size = new System.Drawing.Size(623, 228);
+            this.grpPorts.Size = new System.Drawing.Size(623, 386);
             this.grpPorts.TabIndex = 0;
             this.grpPorts.TabStop = false;
             this.grpPorts.Text = "Ports";
@@ -99,9 +103,9 @@
             this.gboPortSettings.Controls.Add(this.label4);
             this.gboPortSettings.Controls.Add(this.label3);
             this.gboPortSettings.Controls.Add(this.label2);
-            this.gboPortSettings.Location = new System.Drawing.Point(651, 21);
+            this.gboPortSettings.Location = new System.Drawing.Point(6, 413);
             this.gboPortSettings.Name = "gboPortSettings";
-            this.gboPortSettings.Size = new System.Drawing.Size(492, 228);
+            this.gboPortSettings.Size = new System.Drawing.Size(623, 189);
             this.gboPortSettings.TabIndex = 1;
             this.gboPortSettings.TabStop = false;
             this.gboPortSettings.Text = "Port Settings";
@@ -122,24 +126,6 @@
             this.txtInterval.Size = new System.Drawing.Size(100, 20);
             this.txtInterval.TabIndex = 23;
             this.txtInterval.Text = "1000";
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(870, 255);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 22;
-            this.button1.Text = "Disconnect";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // btnOK
-            // 
-            this.btnOK.Location = new System.Drawing.Point(757, 255);
-            this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(75, 25);
-            this.btnOK.TabIndex = 14;
-            this.btnOK.Text = "Sync SMS";
-            this.btnOK.UseVisualStyleBackColor = true;
             // 
             // txtWriteTimeOut
             // 
@@ -276,19 +262,29 @@
             this.label2.TabIndex = 1;
             this.label2.Text = "Baud Rate";
             // 
-            // label10
+            // button1
             // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(821, 300);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(52, 13);
-            this.label10.TabIndex = 26;
-            this.label10.Text = "Threads :";
+            this.button1.Location = new System.Drawing.Point(644, 243);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 22;
+            this.button1.Text = "Disconnect";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // btnOK
+            // 
+            this.btnOK.Location = new System.Drawing.Point(644, 286);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(75, 25);
+            this.btnOK.TabIndex = 14;
+            this.btnOK.Text = "Sync SMS";
+            this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(640, 300);
+            this.label9.Location = new System.Drawing.Point(722, 17);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(113, 13);
             this.label9.TabIndex = 25;
@@ -296,9 +292,9 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(1041, 300);
+            this.button2.Location = new System.Drawing.Point(1086, 12);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(102, 23);
+            this.button2.Size = new System.Drawing.Size(59, 23);
             this.button2.TabIndex = 24;
             this.button2.Text = "Clear";
             this.button2.UseVisualStyleBackColor = true;
@@ -306,17 +302,45 @@
             // listBox1
             // 
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(643, 326);
+            this.listBox1.Location = new System.Drawing.Point(725, 38);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(500, 277);
+            this.listBox1.Size = new System.Drawing.Size(420, 563);
             this.listBox1.TabIndex = 23;
+            // 
+            // btnDeletePort
+            // 
+            this.btnDeletePort.Location = new System.Drawing.Point(473, 2);
+            this.btnDeletePort.Name = "btnDeletePort";
+            this.btnDeletePort.Size = new System.Drawing.Size(75, 23);
+            this.btnDeletePort.TabIndex = 27;
+            this.btnDeletePort.Text = "Delete Port";
+            this.btnDeletePort.UseVisualStyleBackColor = true;
+            this.btnDeletePort.Click += new System.EventHandler(this.btnDeletePort_Click);
+            // 
+            // panelPorts
+            // 
+            this.panelPorts.AutoScroll = true;
+            this.panelPorts.Location = new System.Drawing.Point(6, 17);
+            this.panelPorts.Name = "panelPorts";
+            this.panelPorts.Size = new System.Drawing.Size(611, 363);
+            this.panelPorts.TabIndex = 0;
+            // 
+            // lblTotal
+            // 
+            this.lblTotal.AutoSize = true;
+            this.lblTotal.Location = new System.Drawing.Point(841, 17);
+            this.lblTotal.Name = "lblTotal";
+            this.lblTotal.Size = new System.Drawing.Size(13, 13);
+            this.lblTotal.TabIndex = 28;
+            this.lblTotal.Text = "0";
             // 
             // frmRandomPort
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1157, 614);
-            this.Controls.Add(this.label10);
+            this.Controls.Add(this.lblTotal);
+            this.Controls.Add(this.btnDeletePort);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.listBox1);
@@ -330,6 +354,7 @@
             this.Name = "frmRandomPort";
             this.Text = "SMS Application V2";
             this.Load += new System.EventHandler(this.frmRandomPort_Load);
+            this.grpPorts.ResumeLayout(false);
             this.gboPortSettings.ResumeLayout(false);
             this.gboPortSettings.PerformLayout();
             this.ResumeLayout(false);
@@ -359,9 +384,11 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button btnOK;
-        private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.Button btnDeletePort;
+        private System.Windows.Forms.Panel panelPorts;
+        private System.Windows.Forms.Label lblTotal;
     }
 }
