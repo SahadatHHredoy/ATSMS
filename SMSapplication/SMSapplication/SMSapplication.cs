@@ -44,17 +44,17 @@ namespace SMSapplication
         #region System Begin
         private void SMSapplication_Load(object sender, EventArgs e)
         {
-            if (Expire.IsValidate())
-            {
-                ShowLog("System Start");
-                this.btnOK.Enabled = true;
+            //if (Expire.IsValidate())
+            //{
+            //    ShowLog("System Start");
+            //    this.btnOK.Enabled = true;
 
-            }
-            else
-            {
-                ShowLog("System Fail");
-                this.btnOK.Enabled = false;
-            }
+            //}
+            //else
+            //{
+            //    ShowLog("System Fail");
+            //    this.btnOK.Enabled = false;
+            //}
             AssignPort();
 
 
