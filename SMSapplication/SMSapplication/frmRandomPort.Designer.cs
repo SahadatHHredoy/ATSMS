@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.grpPorts = new System.Windows.Forms.GroupBox();
+            this.panelPorts = new System.Windows.Forms.Panel();
             this.btnAddPort = new System.Windows.Forms.Button();
             this.lblPortNo = new System.Windows.Forms.Label();
             this.gboPortSettings = new System.Windows.Forms.GroupBox();
@@ -46,13 +47,12 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnDisconnect = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.btnDeletePort = new System.Windows.Forms.Button();
-            this.panelPorts = new System.Windows.Forms.Panel();
             this.lblTotal = new System.Windows.Forms.Label();
             this.grpPorts.SuspendLayout();
             this.gboPortSettings.SuspendLayout();
@@ -67,6 +67,14 @@
             this.grpPorts.TabIndex = 0;
             this.grpPorts.TabStop = false;
             this.grpPorts.Text = "Ports";
+            // 
+            // panelPorts
+            // 
+            this.panelPorts.AutoScroll = true;
+            this.panelPorts.Location = new System.Drawing.Point(6, 17);
+            this.panelPorts.Name = "panelPorts";
+            this.panelPorts.Size = new System.Drawing.Size(611, 363);
+            this.panelPorts.TabIndex = 0;
             // 
             // btnAddPort
             // 
@@ -262,14 +270,15 @@
             this.label2.TabIndex = 1;
             this.label2.Text = "Baud Rate";
             // 
-            // button1
+            // btnDisconnect
             // 
-            this.button1.Location = new System.Drawing.Point(644, 243);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 22;
-            this.button1.Text = "Disconnect";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnDisconnect.Location = new System.Drawing.Point(644, 243);
+            this.btnDisconnect.Name = "btnDisconnect";
+            this.btnDisconnect.Size = new System.Drawing.Size(75, 23);
+            this.btnDisconnect.TabIndex = 22;
+            this.btnDisconnect.Text = "Disconnect";
+            this.btnDisconnect.UseVisualStyleBackColor = true;
+            this.btnDisconnect.Click += new System.EventHandler(this.btnDisconnect_Click);
             // 
             // btnOK
             // 
@@ -298,6 +307,7 @@
             this.button2.TabIndex = 24;
             this.button2.Text = "Clear";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // listBox1
             // 
@@ -316,14 +326,6 @@
             this.btnDeletePort.Text = "Delete Port";
             this.btnDeletePort.UseVisualStyleBackColor = true;
             this.btnDeletePort.Click += new System.EventHandler(this.btnDeletePort_Click);
-            // 
-            // panelPorts
-            // 
-            this.panelPorts.AutoScroll = true;
-            this.panelPorts.Location = new System.Drawing.Point(6, 17);
-            this.panelPorts.Name = "panelPorts";
-            this.panelPorts.Size = new System.Drawing.Size(611, 363);
-            this.panelPorts.TabIndex = 0;
             // 
             // lblTotal
             // 
@@ -348,11 +350,11 @@
             this.Controls.Add(this.gboPortSettings);
             this.Controls.Add(this.btnAddPort);
             this.Controls.Add(this.grpPorts);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnDisconnect);
             this.Controls.Add(this.btnOK);
             this.MaximizeBox = false;
             this.Name = "frmRandomPort";
-            this.Text = "SMS Application V2";
+            this.Text = "SMS Application V2.0.1";
             this.Load += new System.EventHandler(this.frmRandomPort_Load);
             this.grpPorts.ResumeLayout(false);
             this.gboPortSettings.ResumeLayout(false);
@@ -382,7 +384,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnDisconnect;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Button button2;

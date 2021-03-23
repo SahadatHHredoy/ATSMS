@@ -22,6 +22,7 @@ namespace SMSapplication
         public static int comboY = 0;
 
         public static List<SerialPort> ports = new List<SerialPort>();
+        public static List<System.Windows.Forms.Timer> timers = new List<System.Windows.Forms.Timer>();
         List<int> list = new List<int>();
         public int baudRate = 0;
         public int dataBits = 0;
@@ -36,6 +37,7 @@ namespace SMSapplication
         private void frmRandomPort_Load(object sender, EventArgs e)
         {
             portNames = SerialPort.GetPortNames();
+            btnDisconnect.Enabled = false;
             AddInitialCombox();
         }
         private void btnOK_Click(object sender, EventArgs e)
@@ -53,6 +55,7 @@ namespace SMSapplication
                     var  sPort = OpenPort(control.Text, baudRate, dataBits, readtimeOut, writeTimeOut);
                     if (sPort.IsOpen)
                     {
+                        ports.Add(sPort);
                         var timer = new System.Windows.Forms.Timer();
                         timer.Enabled = true;
                         timer.Interval = interval;
@@ -61,10 +64,13 @@ namespace SMSapplication
                         myArg.port = (ComboBox)control;
                         timer.Tick += (sendr, args) => Timer_Tick(sendr, myArg);
                         timer.Start();
+                        timers.Add(timer);
                     }
 
                 }
             }
+            btnDisconnect.Enabled = true;
+            btnOK.Enabled = false;
             
         }
 
@@ -322,18 +328,18 @@ namespace SMSapplication
             bool remainderM = noOfCombo % 2 == 0;
             int x = remainder ? 400 : remainderM ? 200 : 10;
             ComboBox comboBox = new ComboBox();
-            if (remainder)
-            {
-                comboY = comboY + 30;
-                //grpPorts.Height = grpPorts.Height + 40;
-            }
             comboBox.Location = new System.Drawing.Point(x, comboY);
             comboBox.Name = name;
             comboBox.Size = new System.Drawing.Size(150, 25);
             comboBox.Items.AddRange(portNames);
             panelPorts.Controls.Add(comboBox);
             lblPortNo.Text = noOfCombo.ToString();
-            
+            if (remainder)
+            {
+                comboY = comboY + 30;
+                //grpPorts.Height = grpPorts.Height + 40;
+            }
+
 
         }
         private void btnDeletePort_Click(object sender, EventArgs e)
@@ -378,11 +384,32 @@ namespace SMSapplication
 
 
         }
+
+
+
         #endregion
 
+        private void btnDisconnect_Click(object sender, EventArgs e)
+        {
+            foreach (var timer in timers)
+            {
+                   timer.Stop();
+                   timer.Enabled = false;  
+            }
+            timers = new List<System.Windows.Forms.Timer>();
+            foreach(var port in ports)
+            {
+                ClosePort(port);
+            }
+            ports = new List<SerialPort>();
+            btnOK.Enabled = true;
+            btnDisconnect.Enabled = false;
+        }
 
-   
-       
+        private void button2_Click(object sender, EventArgs e)
+        {
+            listBox1.Items.Clear();
+        }
     }
     public class MyEventArgs : EventArgs
     {
