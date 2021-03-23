@@ -7,7 +7,7 @@
     <framework targetVersion="4.0" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="SMSapplication.exe.manifest" size="5777">
+    <dependentAssembly dependencyType="install" codebase="Application Files\SMSapplication_2_0_1_122\SMSapplication.exe.manifest" size="5777">
       <assemblyIdentity name="SMSapplication.exe" version="2.0.1.122" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
