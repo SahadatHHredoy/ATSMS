@@ -71,6 +71,8 @@ namespace SMSapplication
             }
             btnDisconnect.Enabled = true;
             btnOK.Enabled = false;
+            btnAddPort.Enabled = false;
+            btnDeletePort.Enabled = false;
             
         }
 
@@ -359,6 +361,14 @@ namespace SMSapplication
         public void ShowLog(string log)
         {
             //list.Add(0);
+            if (!listBox1.InvokeRequired)
+            {
+                if (listBox1.Items.Count > 1000)
+                {
+                    listBox1.Items.Clear();
+                }
+                listBox1.Items.Add(log);
+            }
             if (listBox1.InvokeRequired)
             {
                 listBox1.Invoke(new MethodInvoker(delegate
@@ -402,8 +412,10 @@ namespace SMSapplication
                 ClosePort(port);
             }
             ports = new List<SerialPort>();
-            btnOK.Enabled = true;
             btnDisconnect.Enabled = false;
+            btnOK.Enabled = true;
+            btnAddPort.Enabled = true;
+            btnDeletePort.Enabled = true;
         }
 
         private void button2_Click(object sender, EventArgs e)
