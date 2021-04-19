@@ -63,8 +63,8 @@ namespace SMSapplication
                         myArg.sPort = sPort;
                         myArg.port = (ComboBox)control;
                         timer.Tick += (sendr, args) => Timer_Tick(sendr, myArg);
-                        timer.Start();
                         timers.Add(timer);
+                        Thread.Sleep(interval);
                     }
 
                 }
@@ -79,8 +79,8 @@ namespace SMSapplication
         private void Timer_Tick(object sender, EventArgs e)
         {
             var args = (MyEventArgs)e;
-            //var thread = new Thread(() => ShowLog(args.port.Name));
-            var thread = new Thread(() => SendSms(args.sPort,args.port));
+            var thread = new Thread(() => ShowLog(args.port.Name));
+            //var thread = new Thread(() => SendSms(args.sPort,args.port));
             thread.Start();
         }
 

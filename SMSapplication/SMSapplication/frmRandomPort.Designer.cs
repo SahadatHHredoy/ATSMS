@@ -354,7 +354,7 @@
             this.Controls.Add(this.btnOK);
             this.MaximizeBox = false;
             this.Name = "frmRandomPort";
-            this.Text = "SMS Application V2.0.1";
+            this.Text = "SMS Application V2.0.3";
             this.Load += new System.EventHandler(this.frmRandomPort_Load);
             this.grpPorts.ResumeLayout(false);
             this.gboPortSettings.ResumeLayout(false);
