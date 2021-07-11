@@ -14,7 +14,7 @@ namespace SMSapplication
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmRandomPort());
+            Application.Run(new frmPDU());
         }
     }
 }

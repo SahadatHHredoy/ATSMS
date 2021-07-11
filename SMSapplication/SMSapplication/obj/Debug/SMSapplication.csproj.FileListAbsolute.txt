@@ -63,3 +63,6 @@ D:\Projects\ATSMS\SMSapplication\SMSapplication\obj\Debug\SMSapplication.applica
 D:\Projects\ATSMS\SMSapplication\SMSapplication\obj\Debug\SMSapplication.csproj.CopyComplete
 D:\Projects\ATSMS\SMSapplication\SMSapplication\obj\Debug\SMSapplication.frmRandomPort.resources
 D:\Projects\ATSMS\SMSapplication\SMSapplication\obj\Debug\SMSapplication.csprojAssemblyReference.cache
+D:\Projects\ATSMS\SMSapplication\SMSapplication\obj\Debug\SMSapplication.frmPDU.resources
+D:\Projects\ATSMS\SMSapplication\SMSapplication\obj\Debug\SMSapplication.frmInbox.resources
+D:\Projects\ATSMS\SMSapplication\SMSapplication\obj\Debug\SMSapplication.frmDialPad.resources

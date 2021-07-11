@@ -1,8 +1,3 @@
-/*
- * Created by: Syeda Anila Nusrat. 
- * Date: 1st August 2009
- * Time: 2:54 PM 
- */
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
