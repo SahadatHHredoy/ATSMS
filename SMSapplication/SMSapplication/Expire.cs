@@ -18,6 +18,10 @@ namespace SMSapplication
             var hexString = BitConverter.ToString(ba);
             return hexString.Replace("-", "");
         }
+        public static int GetLen(this string value)
+        {
+            return (value.Length - 2) / 2;
+        }
     }
     
     public class Message
@@ -29,5 +33,11 @@ namespace SMSapplication
         public int  user_Id { get; set; }
         public int  status { get; set; }
     }
-   
+    public class PDUMessage
+    {
+        public int id { get; set; }
+        public string pdu { get; set; }
+    }
+    
+
 }
