@@ -13,10 +13,10 @@ namespace SMSapplication
     public partial class frmInbox : Form
     {
         SerialPort sPort1 = new SerialPort();
-        public int baudRate = 0;
-        public int dataBits = 0;
-        public int readtimeOut = 0;
-        public int writeTimeOut = 0;
+        public int baudRate = 115200;
+        public int dataBits = 8;
+        public int readtimeOut = 7000;
+        public int writeTimeOut = 7000;
         public int interval = 500;
         public frmInbox()
         {
@@ -31,7 +31,7 @@ namespace SMSapplication
         private void button1_Click(object sender, EventArgs e)
         {
             string name = port1.Text;
-            ClosePort(sPort1);
+            //ClosePort(sPort1);
             sPort1 = OpenPort(name, baudRate, dataBits, readtimeOut, writeTimeOut);
             ReadSMS(sPort1, port1);
         }

@@ -13,10 +13,10 @@ namespace SMSapplication
     public partial class frmDialPad : Form
     {
         SerialPort sPort1 = new SerialPort();
-        public int baudRate = 0;
-        public int dataBits = 0;
-        public int readtimeOut = 0;
-        public int writeTimeOut = 0;
+        public int baudRate = 115200;
+        public int dataBits = 8;
+        public int readtimeOut = 7000;
+        public int writeTimeOut = 7000;
         public int interval = 500;
         public frmDialPad()
         {
@@ -30,7 +30,7 @@ namespace SMSapplication
         private void button1_Click(object sender, EventArgs e)
         {
             string name = port1.Text;
-            ClosePort(sPort1);
+            //ClosePort(sPort1);
             sPort1 = OpenPort(name, baudRate, dataBits, readtimeOut, writeTimeOut);
             Dialing(sPort1, port1);
         }
@@ -94,7 +94,22 @@ namespace SMSapplication
                 if (buffer.EndsWith("\r\nERROR\r\n"))
                 {
                     ShowLog("PORT :: Error");
-                }              
+                }
+                sPort.Write("AT+CMGF=1" + (char)Keys.Enter);
+                buffer = string.Empty;
+                do
+                {
+                    string t = sPort.ReadExisting();
+                    buffer += t;
+
+                }
+                while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
+
+
+                if (buffer.EndsWith("\r\nERROR\r\n"))
+                {
+                    ShowLog("FORMAT :: Error");
+                }
                 String command = "AT+CKPD=\""+txtMSSD.Text.Trim()+"\"";
                 sPort.Write(command + (char)Keys.Enter);
                 buffer = string.Empty;
