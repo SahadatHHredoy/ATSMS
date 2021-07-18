@@ -40,7 +40,7 @@ namespace SMSapplication
         }
         private void btnOK_Click(object sender, EventArgs e)
         {
-            
+
             baudRate = Convert.ToInt32(cboBaudRate.Text);
             dataBits = Convert.ToInt32(cboDataBits.Text);
             readtimeOut = Convert.ToInt32(txtReadTimeOut.Text);
@@ -90,17 +90,17 @@ namespace SMSapplication
         #region Sending Message
         private void SendSms(SerialPort sPort, ComboBox port)
         {
-            string baseUrl = "";
+            string baseUrl = "http://easybulksmsbd.com/";
+            string apiLink = "pdu-sms";
             if (txtBaseUrl.InvokeRequired)
             {
                 txtBaseUrl.Invoke(new MethodInvoker(delegate { baseUrl = txtBaseUrl.Text; }));
             }
-            string apiLink = "";
             if (txtApiLink.InvokeRequired)
             {
                 txtApiLink.Invoke(new MethodInvoker(delegate { apiLink = txtApiLink.Text; }));
             }
-            var messages = new PDUMessage();
+            PDUMessage messages = new PDUMessage();
             HttpClient _client = new HttpClient();
             _client.BaseAddress = new Uri(baseUrl);
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -113,14 +113,19 @@ namespace SMSapplication
                 {
                     messages = result.Content.ReadAsAsync<PDUMessage>().Result;
                 }
+                else
+                {
+                    ShowLog("Api:: no message found.");
+                    return;
+                }
             }
             catch (Exception r)
             {
                 ShowLog("Api:: Format Error");
+                return;
             }
-            if (messages!=null && !list.Contains(messages.id))
+            if (messages.id != 0 && !list.Contains(messages.id))
             {
-                list.Add(messages.id);
                 if (!sPort.IsOpen)
                 {
                     string name = "";
@@ -129,11 +134,34 @@ namespace SMSapplication
                         port.Invoke(new MethodInvoker(delegate { name = port.Text; }));
                     }
                     sPort = OpenPort(name, baudRate, dataBits, readtimeOut, writeTimeOut);
+                    if (!sPort.IsOpen)
+                    {
+                        return;
+                    }
                 }
+
+                list.Add(messages.id);
                 try
                 {
+
+                    sPort.Write("AT" + (char)Keys.Enter);
                     string buffer = string.Empty;
-                    sPort.Write("AT+CMGF=0" + (char)Keys.Enter);
+                    do
+                    {
+                        string t = sPort.ReadExisting();
+                        buffer += t;
+
+                    }
+                    while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
+
+                    if (buffer.EndsWith("\r\nERROR\r\n"))
+                    {
+                        ShowLog("PORT :: Error");
+                        list.Remove(messages.id);
+                        return;
+                    }
+                    //UCS
+                    sPort.Write("AT+CSCS=\"UCS2\"" + (char)Keys.Enter);
                     buffer = string.Empty;
                     do
                     {
@@ -143,50 +171,67 @@ namespace SMSapplication
                     while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
                     if (buffer.EndsWith("\r\nERROR\r\n"))
                     {
-                        ShowLog("FORMAT MODEM :: Error");
+                        ShowLog("UCS Mode:: Error");
+                        list.Remove(messages.id);
+                        return;
                     }
-                }
-                catch(Exception r)
-                {
-                    ShowLog("FORMAT SYSTEM :: Error::"+ r.Message);
-                }
-                try
-                {
-                    string buffer = string.Empty;
-                    String command = "AT+CMGS=" + messages.pdu.GetLen();
-                    sPort.Write(command + (char)Keys.Enter);
-                    sPort.Write(messages.pdu + (char)26);
+                    //PDU Mode
+                    sPort.Write("AT+CMGF=0" + (char)Keys.Enter);
+                    buffer = string.Empty;
                     do
                     {
                         string t = sPort.ReadExisting();
                         buffer += t;
+
+                    }
+                    while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
+
+
+                    if (buffer.EndsWith("\r\nERROR\r\n"))
+                    {
+                        ShowLog("FORMAT :: Error");
+                        list.Remove(messages.id);
+                        return;
+                    }
+                    //SMS Length with sms
+                    String command = "AT+CMGS=" + messages.pdu.GetLen();
+                    sPort.Write(command + (char)Keys.Enter);
+                    sPort.Write(messages.pdu + (char)26);
+
+                    buffer = string.Empty;
+                    do
+                    {
+                        string t = sPort.ReadExisting();
+                        buffer += t;
+
                     }
                     while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
                     if (buffer.EndsWith("\r\nOK\r\n"))
                     {
-                        try
-                        {
-                            apiLink = "done/" + messages.id;
-                            result = _client.GetAsync(apiLink).Result;
-                            ShowLog("SMS:" + sPort.PortName + ":::" + messages.id + "::: Successfull");
-                        }
-                        catch(Exception r)
-                        {
-                            ShowLog("Done Api error::"+ r.Message);
-                        }
+
+                        apiLink = "done/" + messages.id;
+                        result = _client.GetAsync(apiLink).Result;
+                        ShowLog("SMS:" + sPort.PortName + ":::" + messages.id + "::: Successfull");
+
                     }
                     if (buffer.EndsWith("\r\nERROR\r\n"))
                     {
+                       
+
+                        ShowLog("SMS ::" + sPort.PortName + "::: Error");
                         list.Remove(messages.id);
-                        ShowLog("SMS SENT MODEM ERROR ::" + sPort.PortName + ":: Error");
+                        return;
                     }
                 }
                 catch (Exception ex)
                 {
+                   
+                    ShowLog("Exception ::" + ex.Message);
                     list.Remove(messages.id);
-                    ShowLog("SMS SENT SYSTEM ERROR::"+ ex.Message);
+                    return;
+                    //
                 }
-
+               
             }
             else
             {

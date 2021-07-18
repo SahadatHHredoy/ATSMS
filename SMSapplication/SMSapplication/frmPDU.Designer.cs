@@ -33,6 +33,8 @@
             this.btnAddPort = new System.Windows.Forms.Button();
             this.lblPortNo = new System.Windows.Forms.Label();
             this.gboPortSettings = new System.Windows.Forms.GroupBox();
+            this.txtApiLink = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
             this.txtBaseUrl = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
@@ -58,8 +60,6 @@
             this.lblTotal = new System.Windows.Forms.Label();
             this.btnDialPad = new System.Windows.Forms.Button();
             this.btnInbox = new System.Windows.Forms.Button();
-            this.txtApiLink = new System.Windows.Forms.TextBox();
-            this.label10 = new System.Windows.Forms.Label();
             this.grpPorts.SuspendLayout();
             this.gboPortSettings.SuspendLayout();
             this.SuspendLayout();
@@ -127,6 +127,24 @@
             this.gboPortSettings.TabIndex = 1;
             this.gboPortSettings.TabStop = false;
             this.gboPortSettings.Text = "Port Settings";
+            // 
+            // txtApiLink
+            // 
+            this.txtApiLink.Location = new System.Drawing.Point(365, 141);
+            this.txtApiLink.MaxLength = 5;
+            this.txtApiLink.Name = "txtApiLink";
+            this.txtApiLink.Size = new System.Drawing.Size(100, 20);
+            this.txtApiLink.TabIndex = 28;
+            this.txtApiLink.Text = "pdu-sms";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(265, 148);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(45, 13);
+            this.label10.TabIndex = 27;
+            this.label10.Text = "Api Link";
             // 
             // txtBaseUrl
             // 
@@ -384,24 +402,6 @@
             this.btnInbox.UseVisualStyleBackColor = true;
             this.btnInbox.Click += new System.EventHandler(this.btnInbox_Click);
             // 
-            // txtApiLink
-            // 
-            this.txtApiLink.Location = new System.Drawing.Point(365, 141);
-            this.txtApiLink.MaxLength = 5;
-            this.txtApiLink.Name = "txtApiLink";
-            this.txtApiLink.Size = new System.Drawing.Size(100, 20);
-            this.txtApiLink.TabIndex = 28;
-            this.txtApiLink.Text = "pdu-sms";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(265, 148);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(45, 13);
-            this.label10.TabIndex = 27;
-            this.label10.Text = "Api Link";
-            // 
             // frmPDU
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -422,7 +422,7 @@
             this.Controls.Add(this.btnOK);
             this.MaximizeBox = false;
             this.Name = "frmPDU";
-            this.Text = "SMS Application V2.0.5";
+            this.Text = "SMS Application V2.0.6";
             this.Load += new System.EventHandler(this.frmPDU_Load);
             this.grpPorts.ResumeLayout(false);
             this.gboPortSettings.ResumeLayout(false);
