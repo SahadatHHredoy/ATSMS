@@ -31,7 +31,7 @@ namespace SMSapplication
         private void button1_Click(object sender, EventArgs e)
         {
             string name = port1.Text;
-            //ClosePort(sPort1);
+            ClosePort(sPort1);
             sPort1 = OpenPort(name, baudRate, dataBits, readtimeOut, writeTimeOut);
             ReadSMS(sPort1, port1);
         }

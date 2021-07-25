@@ -36,7 +36,7 @@ namespace SMSapplication
     public class PDUMessage
     {
         public int id { get; set; }
-        public string pdu { get; set; }
+        public string[] pdu { get; set; }
     }
     
 
