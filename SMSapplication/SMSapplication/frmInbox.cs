@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GsmComm.PduConverter;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,6 +19,7 @@ namespace SMSapplication
         public int readtimeOut = 7000;
         public int writeTimeOut = 7000;
         public int interval = 500;
+        private DataGridView songsDataGridView = new DataGridView();
         public frmInbox()
         {
             InitializeComponent();
@@ -26,6 +28,9 @@ namespace SMSapplication
         private void frmInbox_Load(object sender, EventArgs e)
         {
             port1.Items.AddRange(SerialPort.GetPortNames());
+
+            SetupDataGridView();
+            //PopulateDataGridView();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -100,7 +105,7 @@ namespace SMSapplication
 
                     ShowLog("PORT :: Error");
                 }
-                sPort.Write("AT+CMGF=1" + (char)Keys.Enter);
+                sPort.Write("AT+CMGF=0" + (char)Keys.Enter);
                 buffer = string.Empty;
                 do
                 {
@@ -115,8 +120,8 @@ namespace SMSapplication
                 {
                     ShowLog("FORMAT :: Error");
                 }
-            
-                String command = "AT+CMGL=\"ALL\"";
+
+                String command = "AT+CMGL=4";
                 sPort.Write(command + (char)Keys.Enter);
 
                 buffer = string.Empty;
@@ -128,7 +133,8 @@ namespace SMSapplication
                 }
                 while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
 
-                ShowLog(buffer);
+
+                PopulateDataGridView(buffer);
 
 
 
@@ -139,6 +145,71 @@ namespace SMSapplication
                 //
             }
 
+        }
+        private void SetupDataGridView()
+        {
+            //this.Controls.Add(songsDataGridView);
+
+            messageGridView.ColumnCount = 3;
+
+            messageGridView.ColumnHeadersDefaultCellStyle.BackColor = Color.Navy;
+            messageGridView.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            messageGridView.ColumnHeadersDefaultCellStyle.Font =
+                new Font(songsDataGridView.Font, FontStyle.Bold);
+
+            //songsDataGridView.Name = "songsDataGridView";
+            //songsDataGridView.Location = new Point(6, 6);
+            //songsDataGridView.Size = new Size(500, 250);
+            messageGridView.AutoSizeRowsMode =
+                DataGridViewAutoSizeRowsMode.DisplayedCellsExceptHeaders;
+            messageGridView.ColumnHeadersBorderStyle =
+                DataGridViewHeaderBorderStyle.Single;
+            messageGridView.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+            messageGridView.GridColor = Color.Black;
+            messageGridView.RowHeadersVisible = false;
+
+            messageGridView.Columns[0].Name = "Date";
+            messageGridView.Columns[1].Name = "From";
+            messageGridView.Columns[2].Name = "Text";
+            messageGridView.Columns[1].DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            messageGridView.Columns[2].DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+
+
+
+
+        }
+
+        private void PopulateDataGridView(string buffer)
+        {
+
+
+            try
+            {
+                string[] arr = buffer.Split(new char[] { '\r', '\n' });
+                foreach (string s in arr)
+                {
+                    if (s.StartsWith("08"))
+                    {
+                        IncomingSmsPdu sms = IncomingSmsPdu.Decode(s, true);
+                        if (!string.IsNullOrEmpty(sms.UserDataText))
+                        {
+                            var smsDeliver = (SmsDeliverPdu)sms;
+                            string[] row = { smsDeliver.SCTimestamp.ToString(), smsDeliver.OriginatingAddress, sms.UserDataText };
+                            messageGridView.Rows.Add(row);
+                        }
+                      
+
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                ShowLog(ex.Message);
+            }
+
+       
+
+           
         }
         public void ShowLog(string log)
         {

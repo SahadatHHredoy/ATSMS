@@ -161,24 +161,24 @@ namespace SMSapplication
                     if (buffer.EndsWith("\r\nERROR\r\n"))
                     {
                         ShowLog("PORT :: Error");
-                        list.Remove(messages.id);
-                        return;
+                        //list.Remove(messages.id);
+                        //return;
                     }
                     //UCS
-                    sPort.Write("AT+CSCS=\"UCS2\"" + enterChar);
-                    buffer = string.Empty;
-                    do
-                    {
-                        string t = sPort.ReadExisting();
-                        buffer += t;
-                    }
-                    while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-                    if (buffer.EndsWith("\r\nERROR\r\n"))
-                    {
-                        ShowLog("UCS Mode:: Error");
-                        list.Remove(messages.id);
-                        return;
-                    }
+                    //sPort.Write("AT+CSCS=\"UCS2\"" + enterChar);
+                    //buffer = string.Empty;
+                    //do
+                    //{
+                    //    string t = sPort.ReadExisting();
+                    //    buffer += t;
+                    //}
+                    //while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
+                    //if (buffer.EndsWith("\r\nERROR\r\n"))
+                    //{
+                    //    ShowLog("UCS Mode:: Error");
+                    //    list.Remove(messages.id);
+                    //    return;
+                    //}
                     //PDU Mode
                     sPort.Write("AT+CMGF=0" + enterChar);
                     buffer = string.Empty;
@@ -194,8 +194,8 @@ namespace SMSapplication
                     if (buffer.EndsWith("\r\nERROR\r\n"))
                     {
                         ShowLog("FORMAT :: Error");
-                        list.Remove(messages.id);
-                        return;
+                        //list.Remove(messages.id);
+                        //return;
                     }
                     //SMS Length with sms
                     bool isSent = true;

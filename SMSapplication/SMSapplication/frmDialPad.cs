@@ -110,7 +110,7 @@ namespace SMSapplication
                 {
                     ShowLog("FORMAT :: Error");
                 }
-                String command = "AT+CKPD=\""+txtMSSD.Text.Trim()+"\"";
+                String command = "AT+CUSD=1,\""+txtMSSD.Text.Trim()+"\",15";
                 sPort.Write(command + (char)Keys.Enter);
                 buffer = string.Empty;
                 do
