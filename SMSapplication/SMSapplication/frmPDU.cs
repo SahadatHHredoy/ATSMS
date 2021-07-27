@@ -27,6 +27,9 @@ namespace SMSapplication
         public int readtimeOut = 0;
         public int writeTimeOut = 0;
         public int interval = 500;
+
+        //
+        public char enterChar = (char)Keys.Enter;
         public frmPDU()
         {
             InitializeComponent();
@@ -52,8 +55,8 @@ namespace SMSapplication
                 if (control.Name.StartsWith("Combo"))
                 {
                     var sPort = OpenPort(control.Text, baudRate, dataBits, readtimeOut, writeTimeOut);
-                    if (sPort.IsOpen)
-                    {
+                    //if (sPort.IsOpen)
+                    //{
                         ports.Add(sPort);
                         var timer = new System.Windows.Forms.Timer();
                         timer.Enabled = true;
@@ -64,7 +67,7 @@ namespace SMSapplication
                         timer.Tick += (sendr, args) => Timer_Tick(sendr, myArg);
                         timers.Add(timer);
                         Thread.Sleep(interval);
-                    }
+                    //}
 
                 }
             }
@@ -90,6 +93,7 @@ namespace SMSapplication
         #region Sending Message
         private void SendSms(SerialPort sPort, ComboBox port)
         {
+          
             string baseUrl = "http://easybulksmsbd.com/";
             string apiLink = "pdu-sms";
             if (txtBaseUrl.InvokeRequired)
@@ -144,7 +148,7 @@ namespace SMSapplication
                 try
                 {
 
-                    sPort.Write("AT" + (char)Keys.Enter);
+                    sPort.Write("AT" + enterChar);
                     string buffer = string.Empty;
                     do
                     {
@@ -157,26 +161,26 @@ namespace SMSapplication
                     if (buffer.EndsWith("\r\nERROR\r\n"))
                     {
                         ShowLog("PORT :: Error");
-                        list.Remove(messages.id);
-                        return;
+                        //list.Remove(messages.id);
+                        //return;
                     }
                     //UCS
-                    sPort.Write("AT+CSCS=\"UCS2\"" + (char)Keys.Enter);
-                    buffer = string.Empty;
-                    do
-                    {
-                        string t = sPort.ReadExisting();
-                        buffer += t;
-                    }
-                    while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-                    if (buffer.EndsWith("\r\nERROR\r\n"))
-                    {
-                        ShowLog("UCS Mode:: Error");
-                        list.Remove(messages.id);
-                        return;
-                    }
+                    //sPort.Write("AT+CSCS=\"UCS2\"" + enterChar);
+                    //buffer = string.Empty;
+                    //do
+                    //{
+                    //    string t = sPort.ReadExisting();
+                    //    buffer += t;
+                    //}
+                    //while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
+                    //if (buffer.EndsWith("\r\nERROR\r\n"))
+                    //{
+                    //    ShowLog("UCS Mode:: Error");
+                    //    list.Remove(messages.id);
+                    //    return;
+                    //}
                     //PDU Mode
-                    sPort.Write("AT+CMGF=0" + (char)Keys.Enter);
+                    sPort.Write("AT+CMGF=0" + enterChar);
                     buffer = string.Empty;
                     do
                     {
@@ -190,37 +194,39 @@ namespace SMSapplication
                     if (buffer.EndsWith("\r\nERROR\r\n"))
                     {
                         ShowLog("FORMAT :: Error");
-                        list.Remove(messages.id);
-                        return;
+                        //list.Remove(messages.id);
+                        //return;
                     }
                     //SMS Length with sms
-                    String command = "AT+CMGS=" + messages.pdu.GetLen();
-                    sPort.Write(command + (char)Keys.Enter);
-                    sPort.Write(messages.pdu + (char)26);
-
-                    buffer = string.Empty;
-                    do
+                    bool isSent = true;
+                    foreach(string pduCode in messages.pdu)
                     {
-                        string t = sPort.ReadExisting();
-                        buffer += t;
-
+                        String command = "AT+CMGS=" + pduCode.GetLen();
+                        sPort.Write(command + (char)Keys.Enter);
+                        sPort.Write(pduCode + (char)26);
+                        buffer = string.Empty;
+                        do
+                        {
+                            string t = sPort.ReadExisting();
+                            buffer += t;
+                        }
+                        while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
+                        if (buffer.EndsWith("\r\nERROR\r\n"))
+                        {
+                            isSent = false;
+                            ShowLog("SMS ::" + sPort.PortName + "::: Error");
+                            list.Remove(messages.id);
+                            return;
+                        }
                     }
-                    while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-                    if (buffer.EndsWith("\r\nOK\r\n"))
+                   
+                    if (isSent)
                     {
 
                         apiLink = "done/" + messages.id;
                         result = _client.GetAsync(apiLink).Result;
                         ShowLog("SMS:" + sPort.PortName + ":::" + messages.id + "::: Successfull");
 
-                    }
-                    if (buffer.EndsWith("\r\nERROR\r\n"))
-                    {
-                       
-
-                        ShowLog("SMS ::" + sPort.PortName + "::: Error");
-                        list.Remove(messages.id);
-                        return;
                     }
                 }
                 catch (Exception ex)
