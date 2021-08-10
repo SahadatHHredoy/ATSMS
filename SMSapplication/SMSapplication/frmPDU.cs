@@ -55,8 +55,8 @@ namespace SMSapplication
                 if (control.Name.StartsWith("Combo"))
                 {
                     var sPort = OpenPort(control.Text, baudRate, dataBits, readtimeOut, writeTimeOut);
-                    //if (sPort.IsOpen)
-                    //{
+                    if (sPort.IsOpen)
+                    {
                         ports.Add(sPort);
                         var timer = new System.Windows.Forms.Timer();
                         timer.Enabled = true;
@@ -67,7 +67,7 @@ namespace SMSapplication
                         timer.Tick += (sendr, args) => Timer_Tick(sendr, myArg);
                         timers.Add(timer);
                         Thread.Sleep(interval);
-                    //}
+                    }
 
                 }
             }
@@ -148,22 +148,22 @@ namespace SMSapplication
                 try
                 {
 
-                    sPort.Write("AT" + enterChar);
+                   // sPort.Write("AT" + enterChar);
                     string buffer = string.Empty;
-                    do
-                    {
-                        string t = sPort.ReadExisting();
-                        buffer += t;
+                    //do
+                    //{
+                    //    string t = sPort.ReadExisting();
+                    //    buffer += t;
 
-                    }
-                    while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
+                    //}
+                    //while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
 
-                    if (buffer.EndsWith("\r\nERROR\r\n"))
-                    {
-                        ShowLog("PORT :: Error");
-                        //list.Remove(messages.id);
-                        //return;
-                    }
+                    //if (buffer.EndsWith("\r\nERROR\r\n"))
+                    //{
+                    //    ShowLog("PORT :: Error");
+                    //    //list.Remove(messages.id);
+                    //    //return;
+                    //}
                     //UCS
                     //sPort.Write("AT+CSCS=\"UCS2\"" + enterChar);
                     //buffer = string.Empty;
@@ -193,7 +193,7 @@ namespace SMSapplication
 
                     if (buffer.EndsWith("\r\nERROR\r\n"))
                     {
-                        ShowLog("FORMAT :: Error");
+                        ShowLog("FORMAT ::"+sPort.PortName+"::Error");
                         //list.Remove(messages.id);
                         //return;
                     }
