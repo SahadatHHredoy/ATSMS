@@ -18,6 +18,7 @@ namespace SMSapplication
         public int readtimeOut = 7000;
         public int writeTimeOut = 7000;
         public int interval = 500;
+        public bool ReadReady = false;
         public frmDialPad()
         {
             InitializeComponent();
@@ -49,15 +50,15 @@ namespace SMSapplication
                 port.ReadTimeout = p_uReadTimeout;             //300
                 port.WriteTimeout = p_uWriteTimeout;           //300
                 port.Encoding = Encoding.GetEncoding("iso-8859-1");
-                //port.DataReceived += new SerialDataReceivedEventHandler(port_DataReceived);
+                port.DataReceived += new SerialDataReceivedEventHandler(port_DataReceived);
                 port.Open();
                 port.DtrEnable = true;
                 port.RtsEnable = true;
 
                 //SendKeys.Send("{ENTER}");
-                if (port.IsOpen)
+                if (!port.IsOpen)
                 {
-                    ShowLog("#connection :: " + port.PortName + " ::Connected");
+                    ShowLog("#connection :: " + port.PortName + " ::Not Connected");
                 }
             }
             catch (Exception ex)
@@ -66,6 +67,19 @@ namespace SMSapplication
             }
             return port;
         }
+
+        private void port_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            if (ReadReady)
+            {
+                SerialPort sp = (SerialPort)sender;
+                string indata = sp.ReadExisting();
+                ShowLog(indata);
+                ReadReady = false;
+            }
+          
+        }
+
         private void Dialing(SerialPort sPort, ComboBox port)
         {
             if (!sPort.IsOpen)
@@ -119,7 +133,17 @@ namespace SMSapplication
                     buffer += t;
                 }
                 while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-                ShowLog(buffer);
+                if (buffer.EndsWith("\r\nERROR\r\n"))
+                {
+                    ShowLog("Command not execute. Please Try again");
+                }
+                if (buffer.EndsWith("\r\nOK\r\n"))
+                {
+                    ReadReady = true;
+                    ShowLog("Command execute Successfully.");
+                }
+
+
 
             }
             catch (Exception ex)
@@ -144,8 +168,10 @@ namespace SMSapplication
         {
             try
             {
+                port.DataReceived -= new SerialDataReceivedEventHandler(port_DataReceived);
                 port.Close();
-                ShowLog("Disconnect :: " + port.PortName);
+                
+                //ShowLog("Disconnect :: " + port.PortName);
             }
             catch (Exception ex)
             {

@@ -1,4 +1,5 @@
 ﻿using GsmComm.PduConverter;
+using GsmComm.PduConverter.SmartMessaging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -60,6 +61,7 @@ namespace SMSapplication
                 MessageBox.Show(ex.Message);
             }
         }
+        
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -181,6 +183,18 @@ OK
            
                       
            
+
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            string message = txtSent.Text;
+            string number = txtSentNo.Text;
+            OutgoingSmsPdu[] pdus = null;
+            pdus = SmartMessageFactory.CreateConcatTextMessage(message,true, number);
+            string hh = "0011000B811048061468F90008A72209B909CD09AF09BE09B209CB002009AC09BE098209B209BE09A609C709B600200964";
+            int l = hh.GetLen();
 
 
         }
