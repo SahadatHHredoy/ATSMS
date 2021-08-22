@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GsmComm.PduConverter;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -27,6 +28,9 @@ namespace SMSapplication
         public int readtimeOut = 0;
         public int writeTimeOut = 0;
         public int interval = 500;
+        string baseUrl = "http://easybulksmsbd.com/";
+        string apiLink = "getList";
+        HttpClient _client = new HttpClient();
 
         //
         public char enterChar = (char)Keys.Enter;
@@ -40,6 +44,24 @@ namespace SMSapplication
             portNames = SerialPort.GetPortNames();
             btnDisconnect.Enabled = false;
             AddInitialCombox();
+            if (txtBaseUrl.InvokeRequired)
+            {
+                txtBaseUrl.Invoke(new MethodInvoker(delegate { baseUrl = txtBaseUrl.Text; }));
+            }
+            else
+            {
+                baseUrl = txtBaseUrl.Text;
+            }
+            if (txtApiLink.InvokeRequired)
+            {
+                txtApiLink.Invoke(new MethodInvoker(delegate { apiLink = txtApiLink.Text; }));
+            }
+            else
+            {
+                apiLink = txtApiLink.Text;
+            }
+            _client.BaseAddress = new Uri(baseUrl);
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
         private void btnOK_Click(object sender, EventArgs e)
         {
@@ -55,8 +77,11 @@ namespace SMSapplication
                 if (control.Name.StartsWith("Combo"))
                 {
                     var sPort = OpenPort(control.Text, baudRate, dataBits, readtimeOut, writeTimeOut);
-                    if (sPort.IsOpen)
-                    {
+                  //  if (sPort.IsOpen)
+                   // {
+                        int cnt = Convert.ToInt32(lblConnect.Text);
+                        cnt++;
+                        lblConnect.Text =cnt.ToString();
                         ports.Add(sPort);
                         var timer = new System.Windows.Forms.Timer();
                         timer.Enabled = true;
@@ -67,7 +92,7 @@ namespace SMSapplication
                         timer.Tick += (sendr, args) => Timer_Tick(sendr, myArg);
                         timers.Add(timer);
                         Thread.Sleep(interval);
-                    }
+                   // }
 
                 }
             }
@@ -93,29 +118,29 @@ namespace SMSapplication
         #region Sending Message
         private void SendSms(SerialPort sPort, ComboBox port)
         {
-          
-            string baseUrl = "http://easybulksmsbd.com/";
-            string apiLink = "pdu-sms";
-            if (txtBaseUrl.InvokeRequired)
-            {
-                txtBaseUrl.Invoke(new MethodInvoker(delegate { baseUrl = txtBaseUrl.Text; }));
-            }
-            if (txtApiLink.InvokeRequired)
-            {
-                txtApiLink.Invoke(new MethodInvoker(delegate { apiLink = txtApiLink.Text; }));
-            }
-            PDUMessage messages = new PDUMessage();
-            HttpClient _client = new HttpClient();
-            _client.BaseAddress = new Uri(baseUrl);
-            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            // Blocking call!
+
+            Message message = new Message();
             HttpResponseMessage result;
+            //if (!sPort.IsOpen)
+            //{
+            //    string name = "";
+            //    if (port.InvokeRequired)
+            //    {
+            //        port.Invoke(new MethodInvoker(delegate { name = port.Text; }));
+            //    }
+            //    sPort = OpenPort(name, baudRate, dataBits, readtimeOut, writeTimeOut);
+            //    if (!sPort.IsOpen)
+            //    {
+            //        return;
+            //    }
+            //}
             try
             {
                 result = _client.GetAsync(apiLink).Result;
                 if (result.IsSuccessStatusCode)
                 {
-                    messages = result.Content.ReadAsAsync<PDUMessage>().Result;
+                   var messages = result.Content.ReadAsAsync<Message[]>().Result;
+                    message = messages.FirstOrDefault();
                 }
                 else
                 {
@@ -128,79 +153,31 @@ namespace SMSapplication
                 ShowLog("Api:: Format Error");
                 return;
             }
-            if (messages.id != 0 && !list.Contains(messages.id))
+            if (message!=null && !list.Contains(message.id))
             {
-                if (!sPort.IsOpen)
-                {
-                    string name = "";
-                    if (port.InvokeRequired)
-                    {
-                        port.Invoke(new MethodInvoker(delegate { name = port.Text; }));
-                    }
-                    sPort = OpenPort(name, baudRate, dataBits, readtimeOut, writeTimeOut);
-                    if (!sPort.IsOpen)
-                    {
-                        return;
-                    }
-                }
-
-                list.Add(messages.id);
+                list.Add(message.id);
                 try
                 {
-
-                   // sPort.Write("AT" + enterChar);
+                    
                     string buffer = string.Empty;
-                    //do
-                    //{
-                    //    string t = sPort.ReadExisting();
-                    //    buffer += t;
-
-                    //}
-                    //while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-
-                    //if (buffer.EndsWith("\r\nERROR\r\n"))
-                    //{
-                    //    ShowLog("PORT :: Error");
-                    //    //list.Remove(messages.id);
-                    //    //return;
-                    //}
-                    //UCS
-                    //sPort.Write("AT+CSCS=\"UCS2\"" + enterChar);
-                    //buffer = string.Empty;
-                    //do
-                    //{
-                    //    string t = sPort.ReadExisting();
-                    //    buffer += t;
-                    //}
-                    //while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-                    //if (buffer.EndsWith("\r\nERROR\r\n"))
-                    //{
-                    //    ShowLog("UCS Mode:: Error");
-                    //    list.Remove(messages.id);
-                    //    return;
-                    //}
-                    //PDU Mode
                     sPort.Write("AT+CMGF=0" + enterChar);
                     buffer = string.Empty;
                     do
                     {
                         string t = sPort.ReadExisting();
                         buffer += t;
-
                     }
                     while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
-
-
                     if (buffer.EndsWith("\r\nERROR\r\n"))
                     {
-                        ShowLog("FORMAT ::"+sPort.PortName+"::Error");
-                        //list.Remove(messages.id);
-                        //return;
+                        ShowLog("SMS FORMAT ::" + sPort.PortName + "::Error");
                     }
                     //SMS Length with sms
                     bool isSent = true;
-                    foreach(string pduCode in messages.pdu)
+                    OutgoingSmsPdu[] pdus = message.mobile.GetPdus(message.text);
+                    foreach (var pdu in pdus)
                     {
+                        string pduCode = pdu.ToString();
                         String command = "AT+CMGS=" + pduCode.GetLen();
                         sPort.Write(command + (char)Keys.Enter);
                         sPort.Write(pduCode + (char)26);
@@ -215,17 +192,17 @@ namespace SMSapplication
                         {
                             isSent = false;
                             ShowLog("SMS ::" + sPort.PortName + "::: Error");
-                            list.Remove(messages.id);
+                            list.Remove(message.id);
                             return;
                         }
                     }
-                   
+
                     if (isSent)
                     {
 
-                        apiLink = "done/" + messages.id;
+                        apiLink = "done/" + message.id;
                         result = _client.GetAsync(apiLink).Result;
-                        ShowLog("SMS:" + sPort.PortName + ":::" + messages.id + "::: Successfull");
+                        ShowLog("SMS:" + sPort.PortName + ":::" + message.id + "::: Successfull");
 
                     }
                 }
@@ -233,7 +210,7 @@ namespace SMSapplication
                 {
                    
                     ShowLog("Exception ::" + ex.Message);
-                    list.Remove(messages.id);
+                    list.Remove(message.id);
                     return;
                     //
                 }
