@@ -37,6 +37,9 @@
             this.button3 = new System.Windows.Forms.Button();
             this.txtSentNo = new System.Windows.Forms.TextBox();
             this.txtSent = new System.Windows.Forms.TextBox();
+            this.btnGetLen = new System.Windows.Forms.Button();
+            this.txtGetLen = new System.Windows.Forms.TextBox();
+            this.button4 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // txtP
@@ -115,11 +118,42 @@
             this.txtSent.Size = new System.Drawing.Size(412, 58);
             this.txtSent.TabIndex = 8;
             // 
+            // btnGetLen
+            // 
+            this.btnGetLen.Location = new System.Drawing.Point(247, 12);
+            this.btnGetLen.Name = "btnGetLen";
+            this.btnGetLen.Size = new System.Drawing.Size(75, 23);
+            this.btnGetLen.TabIndex = 9;
+            this.btnGetLen.Text = "Get Len";
+            this.btnGetLen.UseVisualStyleBackColor = true;
+            this.btnGetLen.Click += new System.EventHandler(this.btnGetLen_Click);
+            // 
+            // txtGetLen
+            // 
+            this.txtGetLen.Location = new System.Drawing.Point(328, 2);
+            this.txtGetLen.Multiline = true;
+            this.txtGetLen.Name = "txtGetLen";
+            this.txtGetLen.Size = new System.Drawing.Size(412, 58);
+            this.txtGetLen.TabIndex = 10;
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(423, 387);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(75, 23);
+            this.button4.TabIndex = 11;
+            this.button4.Text = "button4";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
             // TESTER
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.button4);
+            this.Controls.Add(this.txtGetLen);
+            this.Controls.Add(this.btnGetLen);
             this.Controls.Add(this.txtSent);
             this.Controls.Add(this.txtSentNo);
             this.Controls.Add(this.button3);
@@ -148,5 +182,8 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.TextBox txtSentNo;
         private System.Windows.Forms.TextBox txtSent;
+        private System.Windows.Forms.Button btnGetLen;
+        private System.Windows.Forms.TextBox txtGetLen;
+        private System.Windows.Forms.Button button4;
     }
 }

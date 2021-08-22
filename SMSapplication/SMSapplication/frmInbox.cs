@@ -137,7 +137,27 @@ namespace SMSapplication
 
                 PopulateDataGridView(buffer);
 
+                ShowLog("Try to delete all message from SMS store");
+                command = "AT+CMGD=,4";
+                sPort.Write(command + (char)Keys.Enter);
 
+                buffer = string.Empty;
+                do
+                {
+                    string t = sPort.ReadExisting();
+                    buffer += t;
+
+                }
+                while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
+                if (buffer.EndsWith("\r\nERROR\r\n"))
+                {
+                    ShowLog("Message not delete. Please Try again");
+                }
+                if (buffer.EndsWith("\r\nOK\r\n"))
+                {
+                  
+                    ShowLog("Message delete Successfully.");
+                }
 
             }
             catch (Exception ex)
@@ -202,6 +222,7 @@ namespace SMSapplication
 
                     }
                 }
+                messageGridView.Sort(messageGridView.Columns["Date"], ListSortDirection.Descending);
             }
             catch(Exception ex)
             {

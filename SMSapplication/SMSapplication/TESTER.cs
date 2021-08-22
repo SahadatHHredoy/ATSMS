@@ -193,10 +193,27 @@ OK
             string number = txtSentNo.Text;
             OutgoingSmsPdu[] pdus = null;
             pdus = SmartMessageFactory.CreateConcatTextMessage(message,true, number);
-            string hh = "0011000B811048061468F90008A72209B909CD09AF09BE09B209CB002009AC09BE098209B209BE09A609C709B600200964";
-            int l = hh.GetLen();
+            foreach(var pdu in pdus)
+            {
+
+                string str = pdu.ToString();
+            }
+          
+          
 
 
+        }
+
+        private void btnGetLen_Click(object sender, EventArgs e)
+        {
+            string message = txtGetLen.Text;
+            MessageBox.Show(message.GetLen().ToString());
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            string str = "" + (char)26;
+            string str1 = "" + (char)13;
         }
     }
 }

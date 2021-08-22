@@ -60,6 +60,8 @@
             this.lblTotal = new System.Windows.Forms.Label();
             this.btnDialPad = new System.Windows.Forms.Button();
             this.btnInbox = new System.Windows.Forms.Button();
+            this.label11 = new System.Windows.Forms.Label();
+            this.lblConnect = new System.Windows.Forms.Label();
             this.grpPorts.SuspendLayout();
             this.gboPortSettings.SuspendLayout();
             this.SuspendLayout();
@@ -135,7 +137,7 @@
             this.txtApiLink.Name = "txtApiLink";
             this.txtApiLink.Size = new System.Drawing.Size(100, 20);
             this.txtApiLink.TabIndex = 28;
-            this.txtApiLink.Text = "pdu-sms";
+            this.txtApiLink.Text = "getList";
             // 
             // label10
             // 
@@ -402,11 +404,31 @@
             this.btnInbox.UseVisualStyleBackColor = true;
             this.btnInbox.Click += new System.EventHandler(this.btnInbox_Click);
             // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(641, 326);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(72, 13);
+            this.label11.TabIndex = 31;
+            this.label11.Text = "Connect Port:";
+            // 
+            // lblConnect
+            // 
+            this.lblConnect.AutoSize = true;
+            this.lblConnect.Location = new System.Drawing.Point(712, 326);
+            this.lblConnect.Name = "lblConnect";
+            this.lblConnect.Size = new System.Drawing.Size(13, 13);
+            this.lblConnect.TabIndex = 32;
+            this.lblConnect.Text = "0";
+            // 
             // frmPDU
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1157, 614);
+            this.Controls.Add(this.lblConnect);
+            this.Controls.Add(this.label11);
             this.Controls.Add(this.btnInbox);
             this.Controls.Add(this.btnDialPad);
             this.Controls.Add(this.lblTotal);
@@ -422,7 +444,7 @@
             this.Controls.Add(this.btnOK);
             this.MaximizeBox = false;
             this.Name = "frmPDU";
-            this.Text = "SMS Application V2.0.8";
+            this.Text = "SMS Application V2.0.9";
             this.Load += new System.EventHandler(this.frmPDU_Load);
             this.grpPorts.ResumeLayout(false);
             this.gboPortSettings.ResumeLayout(false);
@@ -466,5 +488,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtApiLink;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label lblConnect;
     }
 }

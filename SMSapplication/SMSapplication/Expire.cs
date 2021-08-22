@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GsmComm.PduConverter;
+using GsmComm.PduConverter.SmartMessaging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,6 +23,14 @@ namespace SMSapplication
         public static int GetLen(this string value)
         {
             return (value.Length - 2) / 2;
+        }
+        public static OutgoingSmsPdu[] GetPdus(this string number, string text)
+        {
+            OutgoingSmsPdu[] pdus = null;
+            text = text.Replace("\r", "");
+            text = text.Replace("\n", "");
+            pdus = SmartMessageFactory.CreateConcatTextMessage(text, true, number);
+            return pdus;
         }
     }
     
