@@ -10,6 +10,10 @@ namespace SMSapplication
     public static class Expire
     {
     
+        public static string AppVersion()
+        {
+            return "2.1.1";
+        }
         public static int GetRandomNumber()
         {
             return new Random().Next(1, 8);

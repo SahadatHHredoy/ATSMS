@@ -1,4 +1,5 @@
 ﻿using GsmComm.PduConverter;
+using GsmComm.PduConverter.SmartMessaging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -28,9 +29,7 @@ namespace SMSapplication
         public int readtimeOut = 0;
         public int writeTimeOut = 0;
         public int interval = 500;
-        string baseUrl = "http://easybulksmsbd.com/";
-        string apiLink = "getList";
-        HttpClient _client = new HttpClient();
+
 
         //
         public char enterChar = (char)Keys.Enter;
@@ -44,24 +43,7 @@ namespace SMSapplication
             portNames = SerialPort.GetPortNames();
             btnDisconnect.Enabled = false;
             AddInitialCombox();
-            if (txtBaseUrl.InvokeRequired)
-            {
-                txtBaseUrl.Invoke(new MethodInvoker(delegate { baseUrl = txtBaseUrl.Text; }));
-            }
-            else
-            {
-                baseUrl = txtBaseUrl.Text;
-            }
-            if (txtApiLink.InvokeRequired)
-            {
-                txtApiLink.Invoke(new MethodInvoker(delegate { apiLink = txtApiLink.Text; }));
-            }
-            else
-            {
-                apiLink = txtApiLink.Text;
-            }
-            _client.BaseAddress = new Uri(baseUrl);
-            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
         }
         private void btnOK_Click(object sender, EventArgs e)
         {
@@ -77,11 +59,11 @@ namespace SMSapplication
                 if (control.Name.StartsWith("Combo"))
                 {
                     var sPort = OpenPort(control.Text, baudRate, dataBits, readtimeOut, writeTimeOut);
-                  //  if (sPort.IsOpen)
-                   // {
+                    if (sPort.IsOpen)
+                    {
                         int cnt = Convert.ToInt32(lblConnect.Text);
                         cnt++;
-                        lblConnect.Text =cnt.ToString();
+                        lblConnect.Text = cnt.ToString();
                         ports.Add(sPort);
                         var timer = new System.Windows.Forms.Timer();
                         timer.Enabled = true;
@@ -92,7 +74,7 @@ namespace SMSapplication
                         timer.Tick += (sendr, args) => Timer_Tick(sendr, myArg);
                         timers.Add(timer);
                         Thread.Sleep(interval);
-                   // }
+                    }
 
                 }
             }
@@ -119,28 +101,34 @@ namespace SMSapplication
         private void SendSms(SerialPort sPort, ComboBox port)
         {
 
-            Message message = new Message();
+            string baseUrl = "http://easybulksmsbd.com/";
+            string apiLink = "getList";
+            Message[] messages = new Message[0];
+            HttpClient _client = new HttpClient();
+            _client.BaseAddress = new Uri(baseUrl);
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            // Blocking call!
             HttpResponseMessage result;
-            //if (!sPort.IsOpen)
-            //{
-            //    string name = "";
-            //    if (port.InvokeRequired)
-            //    {
-            //        port.Invoke(new MethodInvoker(delegate { name = port.Text; }));
-            //    }
-            //    sPort = OpenPort(name, baudRate, dataBits, readtimeOut, writeTimeOut);
-            //    if (!sPort.IsOpen)
-            //    {
-            //        return;
-            //    }
-            //}
+            if (!sPort.IsOpen)
+            {
+                string name = "";
+                if (port.InvokeRequired)
+                {
+                    port.Invoke(new MethodInvoker(delegate { name = port.Text; }));
+                }
+                sPort = OpenPort(name, baudRate, dataBits, readtimeOut, writeTimeOut);
+                if (!sPort.IsOpen)
+                {
+                    return;
+                }
+            }
             try
             {
+
                 result = _client.GetAsync(apiLink).Result;
                 if (result.IsSuccessStatusCode)
                 {
-                   var messages = result.Content.ReadAsAsync<Message[]>().Result;
-                    message = messages.FirstOrDefault();
+                    messages = result.Content.ReadAsAsync<Message[]>().Result;
                 }
                 else
                 {
@@ -150,15 +138,15 @@ namespace SMSapplication
             }
             catch (Exception r)
             {
-                ShowLog("Api:: Format Error");
+                ShowLog("Api Format Error:::" + r.Message);
                 return;
             }
-            if (message!=null && !list.Contains(message.id))
+            if (messages.Length > 0 && !list.Contains(messages[0].id))
             {
-                list.Add(message.id);
+                list.Add(messages[0].id);
                 try
                 {
-                    
+
                     string buffer = string.Empty;
                     sPort.Write("AT+CMGF=0" + enterChar);
                     buffer = string.Empty;
@@ -170,15 +158,22 @@ namespace SMSapplication
                     while (!buffer.EndsWith("\r\nOK\r\n") && !buffer.EndsWith("\r\nERROR\r\n"));
                     if (buffer.EndsWith("\r\nERROR\r\n"))
                     {
-                        ShowLog("SMS FORMAT ::" + sPort.PortName + "::Error");
+                        list.Remove(messages[0].id);
+                        return;
+                        //ShowLog("SMS FORMAT ::" + sPort.PortName + "::Error");
                     }
-                    //SMS Length with sms
+                   // SMS Length with sms
                     bool isSent = true;
-                    OutgoingSmsPdu[] pdus = message.mobile.GetPdus(message.text);
+                    OutgoingSmsPdu[] pdus = null;
+                    messages[0].text = messages[0].text.Replace("\r", " ");
+                    messages[0].text = messages[0].text.Replace("\n", "");
+                    bool unicode= messages[0].text.Any(s => s > 255);
+                    pdus = SmartMessageFactory.CreateConcatTextMessage(messages[0].text, unicode, messages[0].mobile);
                     foreach (var pdu in pdus)
                     {
                         string pduCode = pdu.ToString();
-                        String command = "AT+CMGS=" + pduCode.GetLen();
+                        int length = (pduCode.Length - 2) / 2;
+                        String command = "AT+CMGS=" + length;
                         sPort.Write(command + (char)Keys.Enter);
                         sPort.Write(pduCode + (char)26);
                         buffer = string.Empty;
@@ -191,8 +186,8 @@ namespace SMSapplication
                         if (buffer.EndsWith("\r\nERROR\r\n"))
                         {
                             isSent = false;
-                            ShowLog("SMS ::" + sPort.PortName + "::: Error");
-                            list.Remove(message.id);
+                            //ShowLog("SMS ::" + sPort.PortName + "::: Error");
+                            list.Remove(messages[0].id);
                             return;
                         }
                     }
@@ -200,21 +195,26 @@ namespace SMSapplication
                     if (isSent)
                     {
 
-                        apiLink = "done/" + message.id;
+                        apiLink = "done/" + messages[0].id;
                         result = _client.GetAsync(apiLink).Result;
-                        ShowLog("SMS:" + sPort.PortName + ":::" + message.id + "::: Successfull");
+                        ShowLog("SMS:" + sPort.PortName + ":::" + messages[0].id + "::: Successfull");
 
+                    }
+                    else
+                    {
+                        list.Remove(messages[0].id);
+                        return;
                     }
                 }
                 catch (Exception ex)
                 {
-                   
+
                     ShowLog("Exception ::" + ex.Message);
-                    list.Remove(message.id);
+                    list.Remove(messages[0].id);
                     return;
                     //
                 }
-               
+
             }
             else
             {
