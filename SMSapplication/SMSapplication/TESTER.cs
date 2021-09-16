@@ -212,8 +212,11 @@ OK
 
         private void button4_Click(object sender, EventArgs e)
         {
-            string str = "" + (char)26;
-            string str1 = "" + (char)13;
+            string str = "JOB ID:4842\r\nC-9,Math,H Math,shahidbag behind the সোনা  hospital,4D,14:00PM,6k\r\nApply: http:tuitionterminal.com.bd job-board job-details 4842\r\nCall: 01826040258";
+            string str1 = "হে সোনা হে সোনা ।";
+
+            bool unicode = str.Any(s => s > 255);
+            bool unicode1 = str1.Any(s => s > 255);
         }
     }
 }

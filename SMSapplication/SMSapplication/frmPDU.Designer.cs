@@ -181,7 +181,7 @@
             this.txtInterval.Name = "txtInterval";
             this.txtInterval.Size = new System.Drawing.Size(100, 20);
             this.txtInterval.TabIndex = 23;
-            this.txtInterval.Text = "1000";
+            this.txtInterval.Text = "10000";
             // 
             // txtWriteTimeOut
             // 
@@ -190,7 +190,7 @@
             this.txtWriteTimeOut.Name = "txtWriteTimeOut";
             this.txtWriteTimeOut.Size = new System.Drawing.Size(100, 20);
             this.txtWriteTimeOut.TabIndex = 13;
-            this.txtWriteTimeOut.Text = "300";
+            this.txtWriteTimeOut.Text = "3000";
             // 
             // txtReadTimeOut
             // 
@@ -199,7 +199,7 @@
             this.txtReadTimeOut.Name = "txtReadTimeOut";
             this.txtReadTimeOut.Size = new System.Drawing.Size(100, 20);
             this.txtReadTimeOut.TabIndex = 12;
-            this.txtReadTimeOut.Text = "300";
+            this.txtReadTimeOut.Text = "3000";
             // 
             // cboParityBits
             // 
@@ -444,7 +444,7 @@
             this.Controls.Add(this.btnOK);
             this.MaximizeBox = false;
             this.Name = "frmPDU";
-            this.Text = "SMS Application V2.0.9";
+            this.Text = "SMS Application V2.1.1";
             this.Load += new System.EventHandler(this.frmPDU_Load);
             this.grpPorts.ResumeLayout(false);
             this.gboPortSettings.ResumeLayout(false);
