@@ -103,6 +103,15 @@ namespace SMSapplication
 
             string baseUrl = "http://easybulksmsbd.com/";
             string apiLink = "getList";
+          
+            if (txtBaseUrl.InvokeRequired)
+            {
+                txtBaseUrl.Invoke(new MethodInvoker(delegate { baseUrl = txtBaseUrl.Text; }));
+            }
+            if (txtApiLink.InvokeRequired)
+            {
+                txtApiLink.Invoke(new MethodInvoker(delegate { apiLink = txtApiLink.Text; }));
+            }
             Message[] messages = new Message[0];
             HttpClient _client = new HttpClient();
             _client.BaseAddress = new Uri(baseUrl);
@@ -165,8 +174,8 @@ namespace SMSapplication
                    // SMS Length with sms
                     bool isSent = true;
                     OutgoingSmsPdu[] pdus = null;
-                    messages[0].text = messages[0].text.Replace("\r", " ");
-                    messages[0].text = messages[0].text.Replace("\n", "");
+                    messages[0].text = messages[0].text.Replace("\r\n\r\n", "\r\n");
+                   // messages[0].text = messages[0].text.Replace("\n", "");
                     bool unicode= messages[0].text.Any(s => s > 255);
                     pdus = SmartMessageFactory.CreateConcatTextMessage(messages[0].text, unicode, messages[0].mobile);
                     foreach (var pdu in pdus)
@@ -208,7 +217,7 @@ namespace SMSapplication
                 }
                 catch (Exception ex)
                 {
-
+ 
                     ShowLog("Exception ::" + ex.Message);
                     list.Remove(messages[0].id);
                     return;

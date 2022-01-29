@@ -133,7 +133,7 @@
             // txtApiLink
             // 
             this.txtApiLink.Location = new System.Drawing.Point(365, 141);
-            this.txtApiLink.MaxLength = 5;
+            this.txtApiLink.MaxLength = 100;
             this.txtApiLink.Name = "txtApiLink";
             this.txtApiLink.Size = new System.Drawing.Size(100, 20);
             this.txtApiLink.TabIndex = 28;
@@ -444,7 +444,7 @@
             this.Controls.Add(this.btnOK);
             this.MaximizeBox = false;
             this.Name = "frmPDU";
-            this.Text = "SMS Application V2.1.1";
+            this.Text = "SMS Application V2.1.7";
             this.Load += new System.EventHandler(this.frmPDU_Load);
             this.grpPorts.ResumeLayout(false);
             this.gboPortSettings.ResumeLayout(false);
