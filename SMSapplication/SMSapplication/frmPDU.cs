@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -33,6 +34,8 @@ namespace SMSapplication
 
         //
         public char enterChar = (char)Keys.Enter;
+        RegexOptions options = RegexOptions.None;
+        Regex regex;
         public frmPDU()
         {
             InitializeComponent();
@@ -43,6 +46,7 @@ namespace SMSapplication
             portNames = SerialPort.GetPortNames();
             btnDisconnect.Enabled = false;
             AddInitialCombox();
+            regex = new Regex("[ ]{2,}", options);
 
         }
         private void btnOK_Click(object sender, EventArgs e)
@@ -103,7 +107,7 @@ namespace SMSapplication
 
             string baseUrl = "http://easybulksmsbd.com/";
             string apiLink = "getList";
-          
+
             if (txtBaseUrl.InvokeRequired)
             {
                 txtBaseUrl.Invoke(new MethodInvoker(delegate { baseUrl = txtBaseUrl.Text; }));
@@ -171,12 +175,12 @@ namespace SMSapplication
                         return;
                         //ShowLog("SMS FORMAT ::" + sPort.PortName + "::Error");
                     }
-                   // SMS Length with sms
+                    // SMS Length with sms
                     bool isSent = true;
                     OutgoingSmsPdu[] pdus = null;
                     messages[0].text = messages[0].text.Replace("\r\n\r\n", "\r\n");
-                   // messages[0].text = messages[0].text.Replace("\n", "");
-                    bool unicode= messages[0].text.Any(s => s > 255);
+                    messages[0].text = regex.Replace(messages[0].text, "\r\n");
+                    bool unicode = messages[0].text.Any(s => s > 255);
                     pdus = SmartMessageFactory.CreateConcatTextMessage(messages[0].text, unicode, messages[0].mobile);
                     foreach (var pdu in pdus)
                     {
@@ -217,8 +221,8 @@ namespace SMSapplication
                 }
                 catch (Exception ex)
                 {
- 
-                    ShowLog("Exception ::" + ex.Message);
+
+                    ShowLog(messages[0].id+"::Exception ::" + ex.Message);
                     list.Remove(messages[0].id);
                     return;
                     //
@@ -248,6 +252,7 @@ namespace SMSapplication
                 port.Parity = Parity.None;                     //None
                 port.ReadTimeout = p_uReadTimeout;             //300
                 port.WriteTimeout = p_uWriteTimeout;           //300
+                //port.Encoding = Encoding.ASCII;
                 port.Encoding = Encoding.GetEncoding("iso-8859-1");
                 //port.DataReceived += new SerialDataReceivedEventHandler(port_DataReceived);
                 port.Open();
