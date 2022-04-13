@@ -444,7 +444,7 @@
             this.Controls.Add(this.btnOK);
             this.MaximizeBox = false;
             this.Name = "frmPDU";
-            this.Text = "SMS Application V2.1.7";
+            this.Text = "SMS Application V2.2.0";
             this.Load += new System.EventHandler(this.frmPDU_Load);
             this.grpPorts.ResumeLayout(false);
             this.gboPortSettings.ResumeLayout(false);

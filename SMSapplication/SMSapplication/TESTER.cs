@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace SMSapplication
@@ -22,7 +23,7 @@ namespace SMSapplication
 
         private void TESTER_Load(object sender, EventArgs e)
         {
-          
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -54,18 +55,18 @@ namespace SMSapplication
                     txtL.Text = pduCode.GetLen().ToString();
                     txtP.Text = pduCode;
                 }
-               
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
         }
-        
+
 
         private void button2_Click(object sender, EventArgs e)
         {
-           string buffer = @"
+            string buffer = @"
 +CMGL: 1,1,,20
 0891881007000006F0040D91881037911268F300080201429120334200
 +CMGL: 2,1,,149
@@ -169,9 +170,9 @@ namespace SMSapplication
 
 OK
 ";
-            
+
             string[] arr = buffer.Split(new char[] { '\r', '\n' });
-            foreach(string s in arr)
+            foreach (string s in arr)
             {
                 if (s.StartsWith("08"))
                 {
@@ -180,9 +181,9 @@ OK
                     string[] row = { smsDeliver.SCTimestamp.ToString(), smsDeliver.OriginatingAddress, sms.UserDataText };
                 }
             }
-           
-                      
-           
+
+
+
 
 
         }
@@ -192,14 +193,14 @@ OK
             string message = txtSent.Text;
             string number = txtSentNo.Text;
             OutgoingSmsPdu[] pdus = null;
-            pdus = SmartMessageFactory.CreateConcatTextMessage(message,true, number);
-            foreach(var pdu in pdus)
+            pdus = SmartMessageFactory.CreateConcatTextMessage(message, true, number);
+            foreach (var pdu in pdus)
             {
 
                 string str = pdu.ToString();
             }
-          
-          
+
+
 
 
         }
@@ -217,6 +218,46 @@ OK
 
             bool unicode = str.Any(s => s > 255);
             bool unicode1 = str1.Any(s => s > 255);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            string baseUrl = "http://easybulksmsbd.com/";
+            string apiLink = "getList";
+            Message[] messages = new Message[0];
+            HttpClient _client = new HttpClient();
+            _client.BaseAddress = new Uri(baseUrl);
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            // Blocking call!
+            HttpResponseMessage result;
+            try
+            {
+                result = _client.GetAsync(apiLink).Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    messages = result.Content.ReadAsAsync<Message[]>().Result;
+                }
+                else
+                {
+                    MessageBox.Show("Api:: no message found.");
+                    return;
+                }
+                OutgoingSmsPdu[] pdus = null;
+
+                //messages[0].text = messages[0].text.Replace("\r\n\r\n", "\r\n");
+                // messages[0].text = messages[0].text.Replace("\n", "");
+                bool unicode = messages[0].text.Any(s => s > 255);
+                pdus = SmartMessageFactory.CreateConcatTextMessage(messages[0].text, unicode, messages[0].mobile);
+                foreach (var pdu in pdus)
+                {
+                    txtPdh.Text = pdu.ToString();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }
